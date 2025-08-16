@@ -2,6 +2,8 @@
 "name": "req-valid-express",
 "version": "1.0.0",
 "description": "Type-safe Express middleware for request validation (CJS, ESM, TS)",
+"license": "MIT",
+"keywords": ["express", "middleware", "validation", "typescript", "schemas"],
 "main": "dist/cjs/index.js",
 "module": "dist/esm/index.js",
 "types": "dist/types/index.d.ts",
@@ -32,7 +34,6 @@
   "type": "git",
   "url": "https://github.com/antorrg/req-valid-express"
 },
-"keywords": ["express", "middleware", "validation", "typescript", "schemas"],
 "dependencies": {
     "inquirer": "^12.9.2",
     "validator": "^13.15.15"
