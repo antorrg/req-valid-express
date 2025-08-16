@@ -8,13 +8,25 @@ export const buildSchema = async () => {
   const { pathName } = await inquirer.prompt<{ pathName: string }>({
     type: "input",
     name: "pathName",
-    message: "¿Dónde quiere guardar el archivo? (ej: src/Schemas)",
+    message: "Where do you want to save the file? (e.g. src/schemas)",
+  });
+
+  const { format } = await inquirer.prompt<{ format: "esm" | "cjs" | "ts" }>({
+    type: "list",
+    name: "format",
+    message: "Select the output format:",
+    choices: [
+      { name: "ESM (export default ...)", value: "esm" },
+      { name: "CommonJS (module.exports = ...)", value: "cjs" },
+      { name: "TypeScript (export default ... with typing)", value: "ts" },
+    ],
   });
 
   const { componentName } = await inquirer.prompt<{ componentName: string }>({
     type: "input",
     name: "componentName",
-    message: "Nombre del archivo:",
+    message: "File name (without extension):",
+    validate: (s) => s.trim().length > 0 || "File name is required",
   });
 
   const schema: Schema = {};
@@ -26,23 +38,37 @@ export const buildSchema = async () => {
     const { cont } = await inquirer.prompt<{ cont: boolean }>({
       type: "confirm",
       name: "cont",
-      message: "¿Agregar otro campo al esquema?",
+      message: "Add another field to the schema?",
       default: true,
     });
     more = cont;
   }
 
-  console.log("🧪 Esquema generado:");
-  const outDirJs = path.resolve(process.cwd(), pathName);
-  const filePath = path.join(outDirJs, `${componentName.toLowerCase()}.js`);
-  const jsContent = `export default ${toJsObjectString(schema)};\n`;
+  console.log("🧪 Generated schema:");
+  const outDir = path.resolve(process.cwd(), pathName);
+  await fs.mkdir(outDir, { recursive: true });
 
-  await fs.writeFile(filePath, jsContent);
-  console.log(`\n📁 Archivo validador guardado en: ${filePath}`);
+  const filePath = path.join(
+    outDir,
+    `${componentName.toLowerCase()}${formatExt(format)}`
+  );
+
+  const fileContent = generateSchemaContent(schema, format);
+
+  await fs.writeFile(filePath, fileContent);
+  console.log(`\n📁 Validator file saved at: ${filePath}`);
   console.dir(schema, { depth: null, colors: true });
 };
 
-
+function formatExt(f: "esm" | "cjs" | "ts"): string {
+  // Elegimos extensiones seguras con Node:
+  // - .mjs para ESM (no depende de "type": "module")
+  // - .cjs para CommonJS (no choca con ESM)
+  // - .ts para TypeScript
+  if (f === "ts") return ".ts";
+  if (f === "cjs") return ".cjs";
+  return ".mjs"; // esm
+}
 
 function toJsObjectString(obj: any, indent = 2): string {
   const space = " ".repeat(indent);
@@ -66,67 +92,27 @@ function toJsObjectString(obj: any, indent = 2): string {
   return JSON.stringify(obj);
 }
 
-// import promptForField from './generate.js'
-// import fs from 'fs/promises'
-// import inquirer from 'inquirer'
-// import path from 'path'
+function generateSchemaContent(schema: any, format: "esm" | "cjs" | "ts"): string {
+  const schemaString = toJsObjectString(schema);
 
+  switch (format) {
+    case "esm":
+      // Archivo .mjs
+      return `export default ${schemaString};\n`;
 
-// const buildSchema = async () => {
-//   const { pathName } = await inquirer.prompt({
-//     type: 'input',
-//     name: 'pathName',
-//     message: 'Donde quiere guardar el archivo?: (ej: src/Schemas)'
-//   })
+    case "cjs":
+      // Archivo .cjs
+      return `module.exports = ${schemaString};\n`;
 
-//   const { componentName } = await inquirer.prompt({
-//     type: 'input',
-//     name: 'componentName',
-//     message: 'Nombre del archivo:'
-//   })
-//   const schema = {}
-//   let more = true
+    case "ts":
+      // Archivo .ts — importa el tipo desde tu paquete publicado
+      return (
+        `import type { Schema } from "req-valid-express";\n\n` +
+        `const schema: Schema = ${schemaString};\n\n` +
+        `export default schema;\n`
+      );
 
-//   while (more) {
-//     const field = await promptForField()
-//     Object.assign(schema, field)
-//     const { cont } = await inquirer.prompt({
-//       type: 'confirm',
-//       name: 'cont',
-//       message: '¿Agregar otro campo al esquema?',
-//       default: true
-//     })
-//     more = cont
-//   }
-
-//   console.log('🧪 Esquema generado:')
-//   const outDirJs = path.resolve(process.cwd(), pathName)//'server/Schemas'
-//     const filePath = path.join(outDirJs, `${componentName.toLowerCase()}.js`)
-//   const jsContent = `export default ${toJsObjectString(schema)};\n`
-//    await fs.writeFile(filePath, jsContent)
-//    console.log(`\n📁 Archivo validador guardado en: ${filePath}`)
-//   console.dir(schema, { depth: null, colors:true })
-// }
-
-// buildSchema()
-
-
-// function toJsObjectString(obj, indent = 2) {
-//   const space = ' '.repeat(indent)
-
-//   if (Array.isArray(obj)) {
-//     const items = obj.map(item => toJsObjectString(item, indent + 2)).join(',\n')
-//     return `[\n${items}\n${' '.repeat(indent - 2)}]`
-//   }
-
-//   if (typeof obj === 'object' && obj !== null) {
-//     const entries = Object.entries(obj).map(([key, value]) => {
-//       const keyStr = /^[a-zA-Z_]\w*$/.test(key) ? key : `"${key}"`
-//       return `${space}${keyStr}: ${toJsObjectString(value, indent + 2)}`
-//     }).join(',\n')
-
-//     return `{\n${entries}\n${' '.repeat(indent - 2)}}`
-//   }
-
-//   return JSON.stringify(obj)
-// }
+    default:
+      return `export default ${schemaString};\n`;
+  }
+}

@@ -3,7 +3,7 @@ import {buildSchema } from "./helpers/createSchema/index.js"
 
 
 async function main() {
-  console.log("¡Bienvenido al creador de esquemas!");
+  console.log("Welcome to the schematic builder!");
  buildSchema();
 }
 

@@ -30,11 +30,11 @@ export class Validator {
     return (req: Request, res: Response, next: NextFunction) => {
       const id = req.params[fieldName]
       if (!id) {
-        next(AuxValid.middError('Falta el id', 400)); return
+        next(AuxValid.middError(`Missing ${fieldName}`, 400)); return
       }
       const isValid = typeof validator === 'function' ? validator(id) : validator.test(id)
       if (!isValid) {
-        next(AuxValid.middError('Parametros no permitidos', 400)); return
+        next(AuxValid.middError('Invalid parameters', 400)); return
       }
       next()
     }

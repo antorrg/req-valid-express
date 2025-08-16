@@ -45,7 +45,6 @@ export class AuxValid {
     return floatValue
   }
 
-  // Nueva función para aislar la lógica de validación
   static validateValue ( 
     value: any,
     fieldType: 'string' | 'int' | 'float' | 'boolean' | 'array',
