@@ -53,7 +53,7 @@ export const buildSchema = async () => {
     `${componentName.toLowerCase()}${formatExt(format)}`
   );
 
-  const fileContent = generateSchemaContent(schema, format);
+  const fileContent = generateSchemaContent(schema, format, componentName);
 
   await fs.writeFile(filePath, fileContent);
   console.log(`\n📁 Validator file saved at: ${filePath}`);
@@ -92,8 +92,9 @@ function toJsObjectString(obj: any, indent = 2): string {
   return JSON.stringify(obj);
 }
 
-function generateSchemaContent(schema: any, format: "esm" | "cjs" | "ts"): string {
+function generateSchemaContent(schema: any, format: "esm" | "cjs" | "ts", nameVar:string): string {
   const schemaString = toJsObjectString(schema);
+  const varName = nameVar.toLowerCase()
 
   switch (format) {
     case "esm":
@@ -108,8 +109,8 @@ function generateSchemaContent(schema: any, format: "esm" | "cjs" | "ts"): strin
       // Archivo .ts — importa el tipo desde tu paquete publicado
       return (
         `import type { Schema } from "req-valid-express";\n\n` +
-        `const schema: Schema = ${schemaString};\n\n` +
-        `export default schema;\n`
+        `const ${varName}: Schema = ${schemaString};\n\n` +
+        `export default ${varName};\n`
       );
 
     default:
