@@ -35,7 +35,7 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
-    "test": "vitest run validate.test"
+    "test": "npm run prepare && vitest run validate.test"
   },
   "repository": {
     "type": "git",
