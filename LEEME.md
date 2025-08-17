@@ -1,7 +1,9 @@
 
 # req-valid-express
 
-Middleware para validar **body**, **query** y **headers** en aplicaciones [Express](https://expressjs.com/).  
+Middleware para validar **body**, **query**, **headers** y **params** en aplicaciones [Express](https://expressjs.com/). 
+
+
 Incluye soporte para **TypeScript**, **CommonJS** y **ESM**.
 
 [![npm version](https://img.shields.io/npm/v/req-valid-express.svg)](https://www.npmjs.com/package/req-valid-express)
@@ -147,11 +149,9 @@ Provee métodos para validar diferentes partes de la request:
 - **paramId('param', method):** validación de parámetros (req.params)
 - **validReg:** provee los regex para paramId (opcional)
 
-> Es importante saber que todo campo que no esté declarado en el esquema será eliminado, solo aquellos que estén correctos o en su defecto tengan un valor por defecto pasarán por el validador.
+> Cualquier campo no declarado en el esquema será eliminado.
+> Solo pasarán los que cumplan la validación o tengan un valor por defecto.
 
-* `validateBody(schema)`
-* `validateQuery(schema)`
-* `validateHeaders(schema)`
 
 Cada esquema soporta:
 
@@ -191,7 +191,7 @@ declare global {
 }
 ```
 
-Esto te permite usar:
+Esto le permite usar:
 
 ```ts
 req.context.query
@@ -204,7 +204,7 @@ sin problemas de tipado en TypeScript.
 
 ## ⚙️ CLI (opcional)
 
-Si instalas globalmente o lo usas vía `npx`, puedes correr:
+Si instala globalmente o lo usa vía `npx`, puede correr:
 
 ```bash
 npx validate-schema
