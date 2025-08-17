@@ -26,31 +26,38 @@ yarn add req-valid-express
 
 ## 🚀 Uso básico
 
-### En TypeScript (ESM)
+### En TypeScript (ESM) 
+**Método** validateBody:
 
 ```ts
 import express from "express";
 import {Validator} from "req-valid-express";
+import type { Schema } from "req-valid-express";
 
 const app = express();
 
 // Schema de ejemplo para validar el body
-const userSchema = {
+const userSchema: Schema = {
   body: {
-    name: { type: "string", required: true, sanitize: ["trim"] },
+    name: { type: "string", required: true, sanitize:{
+      trim: true,
+      escape: true,
+      lowercase: true
+    }},
     age: { type: "number", default: 18 }
   }
 };
 
 app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
-  // Ahora req.context.body contiene los datos validados
-  res.json({ user: req.context.body });
+ 
+  res.json({ user: req.body });
 });
 
 app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
 ```
 
 ### En JavaScript (CommonJS)
+Método validateQuery
 
 ```js
 const express = require("express");
@@ -69,6 +76,62 @@ app.get("/items", Validator.validateQuery(querySchema), (req, res) => {
 });
 
 app.listen(3000);
+
+```
+### En Javascript (ESM) 
+**Método** validateRegex:
+
+```ts
+import express from "express";
+import {Validator} from "req-valid-express";
+
+const app = express();
+
+// Schema de ejemplo para validar el body
+const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+app.post("/users", Validator.validateRegex(emailRegex,
+    'email', //Nombre del parametro a analizar
+    'Introduzca un mail valido' //Mensaje complementario (opcional)
+    ), (req, res) => {
+ 
+  res.json({ user: req.body });
+});
+
+app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
+```
+
+### En Javascript (ESM) 
+**Método** paramId:
+> Nota: puede usar tanto el método propio validReg (que provee regex para casos comunes) como cualquier función externa de validación.
+
+```ts
+import express from "express";
+import {Validator} from "req-valid-express";
+import { validate as uuidValidate } from 'uuid'
+
+const app = express();
+
+// Schema de ejemplo para validar el body
+const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+app.get("/users/:id", Validator.paramId(
+  'id', //Indica el ombre del parametro a probar
+  Validator.ValidReg.UUID // metodo propio de validacion por REGEX
+  ), (req, res) => {
+ 
+  res.json({ user: req.body });
+});
+
+app.put("/users/:userId", Validator.paramId(
+  'userId',   //Indica el ombre del parametro a probar
+  uuidValidate // Método de validación externo
+  ), (req, res) => {
+ 
+  res.json({ user: req.body });
+});
+
+app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
 ```
 
 ---
@@ -77,6 +140,14 @@ app.listen(3000);
 
 La clase principal es `Validator`.
 Provee métodos para validar diferentes partes de la request:
+- **validateBody(schema)** 
+- **validateQuery(schema)** 
+- **validateHeaders(schema)**
+- **validateRegex(regex, 'field', message?):** validación de campo específico del body por medio de REGEX
+- **paramId('param', method):** validación de parámetros (req.params)
+- **validReg:** provee los regex para paramId (opcional)
+
+> Es importante saber que todo campo que no esté declarado en el esquema será eliminado, solo aquellos que estén correctos o en su defecto tengan un valor por defecto pasarán por el validador.
 
 * `validateBody(schema)`
 * `validateQuery(schema)`
@@ -84,17 +155,16 @@ Provee métodos para validar diferentes partes de la request:
 
 Cada esquema soporta:
 
-* `type`: `"string"`, `"number"`, `"boolean"`, etc.
+* `type`: `"string"`, `"int"`, `"float"`,`"boolean"`.
 * `required`: `true | false`
 * `default`: valor por defecto si falta
-* `sanitize`: array de sanitizadores (`"trim"`, `"escape"`, etc.)
-* `regex`: expresión regular opcional
+* `sanitize`: objeto de sanitizadores (`trim`, `escape`, etc.)
 
 Ejemplo de schema con regex y sanitización:
 
 ```ts
 const schema = {
-  email: { type: "string", required: true, sanitize: ["trim"], regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }
+  email: { type: "string", required: true, sanitize: {trim: true} }
 };
 ```
 
@@ -103,6 +173,9 @@ const schema = {
 ## 🧩 Extensión de `Express.Request`
 
 La librería añade la propiedad `context` al objeto `req` de Express para acceder a los valores validados.
+
+> La propiedad `context` se añade al objeto `req` de Express.  
+> Es opcional en body y headers, pero obligatoria para queries si se usa Express 5
 
 ```ts
 declare global {
@@ -121,7 +194,6 @@ declare global {
 Esto te permite usar:
 
 ```ts
-req.context.body
 req.context.query
 req.context.headers
 ```
@@ -144,5 +216,8 @@ Esto le permitirá generar un esquema base de validación desde consola en esm c
 
 ## 📄 Licencia
 
-MIT © 2025 - \[antorrg]
+MIT © 2025 - antorrg
 
+## 📜 Changelog
+
+Vea [CHANGELOG.md](./CHANGELOG.md) para una lista completa de cambios.

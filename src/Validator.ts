@@ -5,11 +5,11 @@ import {ValidateSchema, Schema} from './helpers/ValidateSchema.js'
 
 export class Validator {
 
-  static validateFields = (schema:Schema) => ValidateSchema.validateBody(schema)
+  static validateBody = (schema:Schema) => ValidateSchema.validatorBody(schema)
   static validateQuery = (schema:Schema)=> ValidateSchema.validateQuery(schema)
   static validateHeaders= (schema:Schema) => ValidateSchema.validateHeaders(schema)
 
-  static validateRegex (validRegex:RegExp, nameOfField: string, message:string|null = null) {
+  static validateRegex (validRegex:RegExp, nameOfField: string, message:string|null) {
     return (req: Request, res: Response, next: NextFunction) => {
       if (!validRegex || !nameOfField || nameOfField.trim() === '') {
         return next(AuxValid.middError('Missing parameters in function!', 400))

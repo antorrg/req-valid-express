@@ -31,7 +31,7 @@ function isSchema(s: unknown): s is Schema {
 }
 
 export class ValidateSchema {
-  static validateBody(schema: Schema) {
+  static validatorBody(schema: Schema) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const validated = ValidateSchema.#validateStructure(req.body, schema);
