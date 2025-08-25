@@ -31,10 +31,10 @@ function isSchema(s: unknown): s is Schema {
 }
 
 export class ValidateSchema {
-  static validatorBody(schema: Schema) {
+  static validatorBody(schema: Schema, maxDepth:number=10) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
-        const validated = ValidateSchema.#validateStructure(req.body, schema);
+        const validated = ValidateSchema.#validateStructure(req.body, schema,undefined, maxDepth);
         req.body = validated;
         next();
       } catch (err: any) {
@@ -43,10 +43,10 @@ export class ValidateSchema {
     };
   }
 
-  static validateQuery(schema: Schema) {
+  static validateQuery(schema: Schema, maxDepth:number = 5) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
-        const validated = ValidateSchema.#validateStructure(req.query, schema);
+        const validated = ValidateSchema.#validateStructure(req.query, schema, undefined, maxDepth);
         req.context = req.context || {};
         req.context.query = validated;
         next();
@@ -56,7 +56,7 @@ export class ValidateSchema {
     };
   }
 
-  static validateHeaders(schema: Schema) {
+  static validateHeaders(schema: Schema, maxDepth:number=3) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const headers = req.headers || {};
@@ -72,7 +72,7 @@ export class ValidateSchema {
         }
 
         const validated = schema
-          ? ValidateSchema.#validateStructure(headers, schema, "headers")
+          ? ValidateSchema.#validateStructure(headers, schema, "headers", maxDepth)
           : { "content-type": contentType };
 
         req.context = req.context || {};
@@ -88,14 +88,19 @@ export class ValidateSchema {
   static #validateStructure(
     data: any,
     schema: Schema | FieldSchema | string,
-    path?: string
+    path?: string,
+    maxDepth: number = 20,
+    depth: number = 0
   ): any {
+    if (depth > maxDepth) {
+    throw new Error(`Schema validation exceeded maximum depth at ${path || "root"}`);
+  }
     if (Array.isArray(schema)) {
       if (!Array.isArray(data)) {
         throw new Error(`Expected array at ${path || "root"}`);
       }
       return data.map((item, i) =>
-        ValidateSchema.#validateStructure(item, schema[0] as any, `${path}[${i}]`)
+        ValidateSchema.#validateStructure(item, schema[0] as any, `${path}[${i}]`, maxDepth,depth + 1)
       );
     }
 
@@ -135,7 +140,9 @@ export class ValidateSchema {
         result[key] = ValidateSchema.#validateStructure(
           value,
           fieldSchema as any,
-          fullPath
+          fullPath,
+          maxDepth,
+          depth + 1
         );
       }
       return result;

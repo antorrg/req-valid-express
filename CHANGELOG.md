@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.4] - 2025-08-24
+### Changed
+- Removed support for optional fields in the `validate-schema` CLI.  
+  Now all object attributes must be explicitly validated.
+- Added preventive depth validation in `#validateStructure` to avoid infinite recursion or overly deep objects.  
+  Default `maxDepth` values: Body = 10, Query = 5, Headers = 3.
 
 ## [1.0.3] - 2025-08-17
 ### Fixed

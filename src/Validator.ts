@@ -5,9 +5,9 @@ import {ValidateSchema, Schema} from './helpers/ValidateSchema.js'
 
 export class Validator {
 
-  static validateBody = (schema:Schema) => ValidateSchema.validatorBody(schema)
-  static validateQuery = (schema:Schema)=> ValidateSchema.validateQuery(schema)
-  static validateHeaders= (schema:Schema) => ValidateSchema.validateHeaders(schema)
+  static validateBody = (schema:Schema,maxDepth?:number) => ValidateSchema.validatorBody(schema, maxDepth)
+  static validateQuery = (schema:Schema,maxDepth?:number)=> ValidateSchema.validateQuery(schema, maxDepth)
+  static validateHeaders= (schema:Schema,maxDepth?:number) => ValidateSchema.validateHeaders(schema, maxDepth)
 
   static validateRegex (validRegex:RegExp, nameOfField: string, message:string|null) {
     return (req: Request, res: Response, next: NextFunction) => {

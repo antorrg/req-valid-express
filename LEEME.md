@@ -54,6 +54,16 @@ app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
  
   res.json({ user: req.body });
 });
+// Uso básico: default maxDepth
+app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
+  res.json({ user: req.body });
+});
+
+// Uso avanzado: configuer el maxDepth para validar objetos profundamente anidados (ej: documentos de MongoDB)
+
+app.post("/deep-users", Validator.validateBody(userSchema.body, 15), (req, res) => {
+  res.json({ user: req.body });
+});
 
 app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
 ```

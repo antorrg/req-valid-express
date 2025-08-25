@@ -4,7 +4,7 @@ const agent = session(serverTest)
 import {describe,it, expect} from 'vitest'
 
 describe('"Validator" class:', () => {
-  describe('Method "ValidateBody". Body data validation and typing (POST and PUT) - Simple Object', () => {
+  describe('Method "ValidateBody". Validation and typing - Simple Object', () => {
     it('should validate, type parameters, and allow passing if all are correct.', async () => {
       const data = {
         name: 'name',
@@ -74,7 +74,7 @@ describe('"Validator" class:', () => {
       })
     })
   })
-  describe('Method "ValidateBody". Body data validation and typing (POST and PUT) - Nested Object', () => {
+  describe('Method "ValidateBody". Validation and typing - Nested Object', () => {
     it('should validate, type parameters, and allow passing if all are correct.', async () => {
       const data = {
         name: 'name',
@@ -168,7 +168,7 @@ describe('"Validator" class:', () => {
       })
     })
   })
-  describe('Method "ValidateBody". Body data validation and typing (POST and PUT) - Double Nested Object', () => {
+  describe('Method "ValidateBody". Validation and typing - Double Nested Object', () => {
     it('should validate, type parameters, and allow passing if all are correct.', async () => {
       const data = {
         name: 'name',
@@ -273,6 +273,28 @@ describe('"Validator" class:', () => {
         tags:['publico', 'privado'],
         metadata: 'metadata',
       })
+    })
+    it('should throw an error when body exceeds maximum depth.', async () => {
+      const data = {
+        name: 'name',
+        active: 'true',
+        profile: [{
+            age: '25',
+            rating: 3.25
+        },{
+            age: '33',
+            rating: 4.0
+        }],
+        tags:['publico', 'privado'],
+        metadata: 'metadata',
+    }
+
+      const response = await agent
+        .post('/test/body/depth/create')
+        .send(data)
+        .expect('Content-Type', /json/)
+        .expect(400)
+      expect(response.body).toBe('Schema validation exceeded maximum depth at profile[0].age')
     })
   })
    describe('Method "validateHeaders". Headers validation and storage (default: "Content-Type")', () => {

@@ -22,12 +22,6 @@ export default async function promptForField(): Promise<Schema> {
   if (["string", "int", "float", "boolean"].includes(kind)) {
     const fieldConfig: FieldSchema = { type: kind as FieldSchema["type"] };
 
-    const { isOptional } = await inquirer.prompt<{ isOptional: boolean }>({
-      type: "confirm",
-      name: "isOptional",
-      message: "Is this field optional?",
-      default: false,
-    });
 
     const { hasDefault } = await inquirer.prompt<{ hasDefault: boolean }>({
       type: "confirm",
@@ -52,10 +46,6 @@ export default async function promptForField(): Promise<Schema> {
           : kind === "boolean"
           ? defaultValue === "true"
           : defaultValue;
-    }
-
-    if (isOptional) {
-      fieldConfig.optional = true;
     }
 
     if (kind === "string") {

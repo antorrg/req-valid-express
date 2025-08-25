@@ -57,9 +57,16 @@ const userSchema: Schema = {
   }
 };
 
+// Basic usage: default maxDepth
 app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
   res.json({ user: req.body });
 });
+
+// Advanced usage: configure maxDepth for deeply nested objects (e.g., MongoDB documents)
+app.post("/deep-users", Validator.validateBody(userSchema.body, 15), (req, res) => {
+  res.json({ user: req.body });
+});
+
 
 app.listen(3000, () => console.log("Server running at http://localhost:3000"));
 ```
@@ -167,7 +174,6 @@ It provides methods to validate different parts of the request:
 Each schema supports:
 
 * `type`: `"string"`, `"int"`, `"float"`, `"boolean"`
-* `required`: `true | false`
 * `default`: default value if missing
 * `sanitize`: sanitizers (`trim`, `escape`, `lowercase`, etc.)
 
@@ -175,7 +181,7 @@ Example schema with regex and sanitization:
 
 ```ts
 const schema = {
-  email: { type: "string", required: true, sanitize: { trim: true } }
+  email: { type: "string",  sanitize: { trim: true } }
 };
 ```
 

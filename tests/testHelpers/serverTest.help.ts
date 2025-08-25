@@ -71,6 +71,13 @@ serverTest.post(
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
 )
+serverTest.post(
+  '/test/body/depth/create',
+   Validator.validateBody(threeSchema, 2),
+  (req, res) => {
+    res.status(200).json({ message: 'Passed middleware', data: req.body })
+  }
+)
 
 serverTest.post(
   '/test/user',
