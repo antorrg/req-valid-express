@@ -1,6 +1,6 @@
 {
   "name": "req-valid-express",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Type-safe Express middleware for request validation (CJS, ESM, TS)",
   "license": "MIT",
   "keywords": [
