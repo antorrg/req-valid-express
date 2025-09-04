@@ -28,12 +28,16 @@ yarn add req-valid-express
 
 ## 🚀 Uso básico
 
-### En TypeScript (ESM) 
+### En TypeScript (ESM)
+
+> Nota técnica: Para mantener la compatibilidad con CommonJS y ESM, la importación de la librería en TypeScript se realiza de la siguiente manera. Esto permite que Validator sea accesible tanto en entornos CommonJS como ESM, evitando problemas de interoperabilidad:
+
 **Método** validateBody:
 
 ```ts
 import express from "express";
-import {Validator} from "req-valid-express";
+import pkg from "req-valid-express";
+const {Validator} = pkg; 
 import type { Schema } from "req-valid-express";
 
 const app = express();
