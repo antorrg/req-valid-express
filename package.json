@@ -1,6 +1,6 @@
 {
   "name": "req-valid-express",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Type-safe Express middleware for request validation (CJS, ESM, TS)",
   "license": "MIT",
   "keywords": [
@@ -42,7 +42,7 @@
     "type": "git",
     "url": "https://github.com/antorrg/req-valid-express"
   },
-    "bugs": {
+  "bugs": {
     "url": "https://github.com/antorrg/req-valid-express/issues"
   },
   "dependencies": {
