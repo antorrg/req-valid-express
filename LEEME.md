@@ -25,6 +25,54 @@ yarn add req-valid-express
 ```
 
 ---
+## ⚠️ Importante!
+
+### ¿Por qué usar esquemas generados?
+
+Para asegurar la **compatibilidad** y prevenir errores inesperados, todos los esquemas de validación deberían ser creados usando el *generador de esquemas*  y no escribiéndolos manualmente.
+
+El generador es interactivo y le guiará paso a paso:
+
+1. Elija la ubicación adonde se guardará el archivo.
+2. Seleccione el tipo de archivo (ESM, CommonJS, o TypeScript).
+3. Elija un nombre para el archivo (sin extensión)
+4. Configure las opciones de validación para body, query, y headers.
+
+
+Puede generar los esquemas de dos maneras:  
+
+1. **Usando npx (recomendado, no necesita instalar nada):**
+```bash
+
+   npx validate-schema
+
+```
+
+2. **Añadiendo un script a su package.json:**
+
+```json
+   "scripts": {
+     "gen:schema": "validate-schema"
+   }
+```
+
+Entonces ejecute:
+
+```bash
+   npm run gen:schema
+```
+
+
+
+Generando esquemas con la librería:
+
+* ✅ Garantiza un total soporte para sanitización, validación, valores por defecto y tipado.
+* ✅ Las futuras actualizaciones seguirán siendo compatibles con versiones anteriores.
+* ✅ Evita errores sutiles en las definiciones escritas a mano.
+
+👉 **Siempre genere esquemas en lugar de crearlos manualmente.**
+
+---
 
 ## 🚀 Uso básico
 
@@ -213,18 +261,6 @@ req.context.headers
 ```
 
 sin problemas de tipado en TypeScript.
-
----
-
-## ⚙️ CLI (opcional)
-
-Si instala globalmente o lo usa vía `npx`, puede correr:
-
-```bash
-npx validate-schema
-```
-
-Esto le permitirá generar un esquema base de validación desde consola en esm con opcion de guardado.
 
 ---
 

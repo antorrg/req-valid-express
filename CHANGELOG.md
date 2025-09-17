@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [Unreleased]
+### Added
+- (por completar en el próximo release)
+
+### Changed
+- (por completar en el próximo release)
+
+### Fixed
+- (por completar en el próximo release)
+
+## [1.0.6] - 2025-09-16
+### Changed
+- Removed support for optional fields in `#validateStructure`.
+- Updated `README.md` to clearly explain how and why to use the `validate-schema` CLI, with step-by-step guidance for users.
+
+### Added
+- Enabled **GitHub Issues** to receive feedback, bug reports, and feature requests.
+- Added `bugs` and `repository` fields in `package.json` to reference the GitHub repository (initial setup, still in progress).
+
+
 ## [1.0.5] - 2025-09-04
 ### Fixed
 - Fixed the type exports in `package.json` by adding the `types` property to the `exports` field, allowing proper TypeScript type usage when importing the library.

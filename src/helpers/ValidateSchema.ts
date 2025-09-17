@@ -120,13 +120,7 @@ export class ValidateSchema {
         const value = (data as any)[key];
 
         if (!(key in data)) {
-          if (
-            typeof fieldSchema === "object" &&
-            "optional" in fieldSchema &&
-            fieldSchema.optional
-          ) {
-            continue;
-          } else if (
+         if (
             typeof fieldSchema === "object" &&
             "default" in fieldSchema
           ) {

@@ -27,6 +27,51 @@ yarn add req-valid-express
 
 ---
 
+## ⚠️ Important!
+
+### Why use generated schemas?
+
+To ensure **compatibility** and prevent unexpected bugs, all validation schemas should be created using the built-in generator — not written manually.
+
+The generator is interactive and guides you step by step:
+
+1. Choose the path where the schema file will be saved.
+2. Select the file type (ESM, CommonJS, or TypeScript).
+3. Choose the file name (without extension)
+4. Configure the validation options for body, query, and headers.
+
+You can generate schemas in two ways:  
+
+1. **Using npx (recommended, no install needed):**
+```bash
+
+   npx validate-schema
+
+```
+
+2. **Adding a script to your package.json:**
+
+```json
+   "scripts": {
+     "gen:schema": "validate-schema"
+   }
+```
+
+Then run:
+
+```bash
+   npm run gen:schema
+```
+
+By generating schemas with the library:
+
+* ✅ You guarantee full support for sanitization, defaults, and types.
+* ✅ Future updates will remain backward-compatible.
+* ✅ You avoid subtle bugs from hand-written definitions.
+
+👉 **Always generate schemas instead of crafting them manually.**
+
+---
 
 ## 🚀 Basic Usage
 
@@ -45,6 +90,7 @@ import type { Schema } from "req-valid-express";
 const app = express();
 
 // Example schema to validate the body
+// ⚠️ Best practice: always use the schema generator, not manual objects
 const userSchema: Schema = {
   body: {
     name: { 
@@ -86,6 +132,7 @@ const { Validator } = require("req-valid-express");
 
 const app = express();
 
+// ⚠️ Best practice: always use the schema generator, not manual objects
 const querySchema = {
   page: { type: "number", default: 1 },
   limit: { type: "number", default: 10 }
@@ -100,7 +147,7 @@ app.listen(3000);
 
 ---
 
-### In JavaScript (ESM)
+### In JavaScript (ESM) -validateRegex
 
 Using `validateRegex`:
 
@@ -127,7 +174,7 @@ app.listen(3000, () => console.log("Server running at http://localhost:3000"));
 
 ---
 
-### In JavaScript (ESM)
+### In JavaScript (ESM) -paramId
 
 Using `paramId`:
 
@@ -219,18 +266,6 @@ with proper typing in TypeScript.
 
 ---
 
-## ⚙️ CLI (optional)
-
-If installed globally or used via `npx`, you can run:
-
-```bash
-npx validate-schema
-```
-
-This will generate a base validation schema directly from the console (ESM format, with optional save).
-
----
-
 ## 📄 License
 
 MIT © 2025 - antorrg
@@ -240,4 +275,11 @@ MIT © 2025 - antorrg
 See [CHANGELOG.md](./CHANGELOG.md) for a complete list of changes.
 
 
+## 💬 Feedback and Support
 
+Do you have comments, ideas, or found a bug?  
+Your feedback is very important! You can:
+
+- 📌 [Open an Issue](https://github.com/antorrg/req-valid-express/issues) to report bugs or request new features.
+
+Thank you for helping improve **req-valid-express** 🙌
