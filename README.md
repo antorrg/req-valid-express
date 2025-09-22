@@ -77,14 +77,11 @@ By generating schemas with the library:
 
 ### In TypeScript (ESM)
 
-Technical note: To maintain compatibility with both CommonJS and ESM, the library in TypeScript is imported as shown below. This approach ensures that Validator is accessible in both CommonJS and ESM environments, preventing interoperability issues:
-
 Using `validateBody`:
 
 ```ts
 import express from "express";
-import pkg from "req-valid-express";
-const { Validator } = pkg;
+import { Validator } from "req-valid-express";
 import type { Schema } from "req-valid-express";
 
 const app = express();

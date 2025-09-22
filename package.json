@@ -17,17 +17,6 @@
     "dist",
     "src/express-context.d.ts"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/index.d.ts"
-    },
-    "./cli": {
-      "import": "./dist/esm/cli.js",
-      "require": "./dist/cjs/cli.js"
-    }
-  },
   "bin": {
     "validate-schema": "./dist/esm/cli.js"
   },
