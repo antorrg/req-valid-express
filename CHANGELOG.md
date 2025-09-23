@@ -7,13 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - (por completar en el próximo release)
 
+## [1.0.7] - 2025-09-22
 ### Changed
 - Removed the `exports` field from `package.json` to improve compatibility across different module systems (CommonJS and ESM).  
 - Simplified TypeScript type imports by removing explicit `.ts` extensions in `index.ts`.
 - Updated `README.md` with the new way of implementation.
-
-### Fixed
-- (por completar en el próximo release)
 
 ## [1.0.6] - 2025-09-16
 ### Changed
