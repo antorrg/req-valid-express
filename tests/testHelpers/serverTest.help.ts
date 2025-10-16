@@ -5,7 +5,15 @@ import type from '../../dist/types/express-context.js'
 const singleSchema = {  
   name: { type: 'string' },
   active: { type: 'boolean', default: false },
-  metadata: { type: 'string', optional: true },
+  metadata: { type: 'string', sanitize:{trim: true, escape: true} },
+  price: {type: 'float', default : 2.0}
+}
+const dangerousSchema = {
+  name: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
+  active: { type: 'boolean', default: false },
+  metadata: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
+  comment: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
+  symbols: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
   price: {type: 'float', default : 2.0}
 }
 
@@ -52,6 +60,14 @@ serverTest.use(express.json())
 serverTest.post(
   '/test/body/create',
   Validator.validateBody(singleSchema),
+  (req, res) => {
+    res.status(200).json({ message: 'Passed middleware', data: req.body })
+  }
+)
+
+serverTest.post(
+  '/test/body/sanitize',
+  Validator.validateBody(dangerousSchema),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }

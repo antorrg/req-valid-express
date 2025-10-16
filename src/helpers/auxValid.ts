@@ -1,4 +1,3 @@
-import validator from 'validator'
 
 export type SanitizeOptions = {
   trim?: boolean;
@@ -44,7 +43,20 @@ export class AuxValid {
     if (isNaN(floatValue)) throw new Error('Invalid float value')
     return floatValue
   }
-
+  static escapeHTML(str: string): string {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\//g, '&#x2F;')
+    .replace(/\\/g, '&#x5C;')
+    .replace(/`/g, '&#96;');
+}
+static trimString(str: string): string {
+  return String(str).trim();
+}
   static validateValue ( 
     value: any,
     fieldType: 'string' | 'int' | 'float' | 'boolean' | 'array',
@@ -79,8 +91,8 @@ export class AuxValid {
           throw new Error(`Invalid string value for field ${fieldName}${indexInfo}`)
         }
         if (sanitize) {
-        if (sanitize.trim) value = validator.trim(value)
-        if (sanitize.escape) value = validator.escape(value)
+        if (sanitize.trim) value = this.trimString(value)
+        if (sanitize.escape) value = this.escapeHTML(value)
         if (sanitize.lowercase) value = value.toLowerCase()
         if (sanitize.uppercase) value = value.toUpperCase()
       }

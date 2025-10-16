@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
-### Added
-- (por completar en el próximo release)
+### Changed
+- Replaced the `validator` library with internal sanitization and trimming methods due to a security vulnerability in the `isURL` method.
+- Added tests to verify sanitization and trimming behavior.
 
 ## [1.0.7] - 2025-09-22
 ### Changed

@@ -297,6 +297,33 @@ describe('"Validator" class:', () => {
       expect(response.body).toBe('Schema validation exceeded maximum depth at profile[0].age')
     })
   })
+  describe('Method "ValidateBody". Sanitize and trim. Simple Object', () => {
+        it('should sanitize and escape user input correctly', async () => {
+      const data = { 
+        name: '  name  ',
+        active: 'true',
+        metadata: ' <script>alert("XSS")</script> ',
+        comment: ` backtick \` and "quotes" `,
+        symbols: `slashes / \\ and greater >`,
+        price: 2.0
+      };
+
+      const response = await agent
+        .post('/test/body/sanitize')
+        .send(data)
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(response.body.data).toEqual({
+        name: 'name',
+        active: true,
+        metadata: '&lt;script&gt;alert(&quot;XSS&quot;)&lt;&#x2F;script&gt;',
+        comment: 'backtick &#96; and &quot;quotes&quot;',
+        symbols: 'slashes &#x2F; &#x5C; and greater &gt;',
+        price: 2.0
+      });
+    });
+  })
    describe('Method "validateHeaders". Headers validation and storage (default: "Content-Type")', () => {
     it('should fail with an incorrect Content-Type header', async () => {
       const res = await agent
