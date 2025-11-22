@@ -21,6 +21,7 @@ export type Schema = {
   [key: string]: FieldSchema | Schema | ArraySchema | string;
 };
 
+export type QueryRule = Record<string, (string | number | boolean)[]>
 
 function isFieldSchema(s: unknown): s is FieldSchema {
   return typeof s === "object" && s !== null && "type" in s;
@@ -43,10 +44,25 @@ export class ValidateSchema {
     };
   }
 
-  static validateQuery(schema: Schema, maxDepth:number = 5) {
+  static validateQuery(schema: Schema, rules: QueryRule = {}, maxDepth:number = 5) {
     return (req: Request, res: Response, next: NextFunction) => {
       try {
         const validated = ValidateSchema.#validateStructure(req.query, schema, undefined, maxDepth);
+
+            for (const field of Object.keys(rules)) {
+              const allowed = rules[field];
+              const value = validated[field];
+              if (value === undefined) continue;
+              // Si el valor existe y NO está en la lista permitida → error
+              if (value !== undefined && !allowed.map(String).includes(String(value))) {
+                return next(
+                  AuxValid.middError(
+                    `Invalid value for '${field}'. Allowed: ${allowed.join(", ")}`,
+                    400
+                  )
+                );
+              }
+            }
         req.context = req.context || {};
         req.context.query = validated;
         next();

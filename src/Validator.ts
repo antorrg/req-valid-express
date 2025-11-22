@@ -1,12 +1,12 @@
 import {Request, Response, NextFunction} from 'express'
 import { AuxValid } from './helpers/auxValid.js'
-import {ValidateSchema, Schema} from './helpers/ValidateSchema.js'
+import {ValidateSchema, Schema, QueryRule } from './helpers/ValidateSchema.js'
 
 
 export class Validator {
 
   static validateBody = (schema:Schema,maxDepth?:number) => ValidateSchema.validatorBody(schema, maxDepth)
-  static validateQuery = (schema:Schema,maxDepth?:number)=> ValidateSchema.validateQuery(schema, maxDepth)
+  static validateQuery = (schema:Schema,rules?:QueryRule, maxDepth?:number)=> ValidateSchema.validateQuery(schema, rules, maxDepth)
   static validateHeaders= (schema:Schema,maxDepth?:number) => ValidateSchema.validateHeaders(schema, maxDepth)
 
   static validateRegex (validRegex:RegExp, nameOfField: string, message:string|null) {

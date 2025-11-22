@@ -1,65 +1,15 @@
 import express, { Request, Response, NextFunction }from 'express'
 import { Validator } from '../../dist/esm/Validator.js'
+import * as asset from './assets.help.js'
 import type from '../../dist/types/express-context.js'
 
-const singleSchema = {  
-  name: { type: 'string' },
-  active: { type: 'boolean', default: false },
-  metadata: { type: 'string', sanitize:{trim: true, escape: true} },
-  price: {type: 'float', default : 2.0}
-}
-const dangerousSchema = {
-  name: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
-  active: { type: 'boolean', default: false },
-  metadata: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
-  comment: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
-  symbols: {type: 'string', default: false, sanitize:{trim: true, escape: true} },
-  price: {type: 'float', default : 2.0}
-}
 
-const doubleSchema = {
-  name: { type: 'string' },
-  active: { type: 'boolean', default: false },
-  profile: {
-    age: { type: 'int' },
-    rating: { type: 'float', default: 0.0 }
-  },
-  tags: [{ type: 'string' }],
-  metadata: { type: 'string', optional: true }
-}
-const threeSchema = {
-  name: { type: 'string' },
-  active: { type: 'boolean', default: false },
-  profile: [{
-    age: { type: 'int' },
-    rating: { type: 'float', default: 0.0 }
-  },],
-  tags: [{ type: 'string' }],
-  metadata: { type: 'string', optional: true }
-}
-const headerSchema = {
-  'content-type': {
-    type: 'string',
-    sanitize: { trim: true, lowercase: true },
-  }
-}
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-
-const message:string = 'Introduzca un mail valido'
-
-const queries = 
-{
- page: {type: 'int', default: 1},
- size: {type: 'float', default: 1},
- fields: {type: 'string', default: '', sanitize:{trim: true, escape: true, lowercase: true}},
- truthy: {type: 'boolean', default: false}
-}
 const serverTest = express()
 serverTest.use(express.json())
-
+// validateBody---------------------------------
 serverTest.post(
   '/test/body/create',
-  Validator.validateBody(singleSchema),
+  Validator.validateBody(asset.singleSchema),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
@@ -67,7 +17,7 @@ serverTest.post(
 
 serverTest.post(
   '/test/body/sanitize',
-  Validator.validateBody(dangerousSchema),
+  Validator.validateBody(asset.dangerousSchema),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
@@ -75,57 +25,77 @@ serverTest.post(
 
 serverTest.post(
   '/test/body/extra/create',
-   Validator.validateBody(doubleSchema),
+   Validator.validateBody(asset.doubleSchema),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
 )
 serverTest.post(
   '/test/body/three/create',
-   Validator.validateBody(threeSchema),
+   Validator.validateBody(asset.threeSchema),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
 )
 serverTest.post(
   '/test/body/depth/create',
-   Validator.validateBody(threeSchema, 2),
+   Validator.validateBody(asset.threeSchema, 2),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
 )
+// validateRegex------------------------------------------
 
 serverTest.post(
   '/test/user',
  Validator.validateRegex(
-    emailRegex,
+    asset.emailRegex,
     'email',
-    message
+    asset.message
   ),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.body })
   }
 )
-
+//validateHeaders--------------------------------
 serverTest.post(
   '/sanitize-headers', 
- Validator.validateHeaders(headerSchema), 
+ Validator.validateHeaders(asset.headerSchema), 
   (req, res) => {
   res.status(200).json({ success: true, headers: req.headers })
 })
 serverTest.post(
   '/sanitize-headers-form', 
-  Validator.validateHeaders(headerSchema), 
+  Validator.validateHeaders(asset.headerSchema), 
   (req, res) => {
   res.status(200).json({ success: true, headers: req.headers, result: req?.context?.headers})
 })
+// validateQuery---------------------------------
+
 serverTest.get(
   '/test/param',
-  Validator.validateQuery(queries),
+  Validator.validateQuery(asset.queries),
   (req, res) => {
     res.status(200).json({ message: 'Passed middleware', data: req.query, validData: req?.context?.query})
   }
 )
+
+serverTest.get(
+  '/test/param/queries',
+  Validator.validateQuery(
+  asset.lockquery,
+  {
+    searchField: ['levelName', 'message', 'status'],
+    sortBy: ['id', 'time', 'createdAt'],
+    order:['ASC', 'DESC']
+  }
+  ),
+  (req, res) => {
+    res.status(200).json({ message: 'Passed middleware', data: req.query, validData: req?.context?.query})
+  }
+)
+
+//paramId----------------------------------------------
 
 serverTest.get(
   '/test/param/:id', 

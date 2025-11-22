@@ -16,6 +16,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - 
 ---
+## [1.0.9] - 2025-11-22
+### Added
+- Enhanced `validateQuery` method with optional value verification rules. This allows developers to restrict query parameters to a specific set of allowed values (e.g., enums for sorting or status).
+- Introduced `QueryRule` type to support the new validation logic.
+- Added a dedicated `assets` folder within tests to centralize test data and schemas.
+
+### Changed
+- Refactored the test suite by splitting the monolithic test file into modular, method-specific test files (`ValidateBody.test.ts`, `ValidateQuery.test.ts`, etc.) for better maintainability and readability.
+- Expanded test coverage to include scenarios for the new query validation rules.
+---
 ## [1.0.8] - 2025-10-20
 ### Changed
 - Replaced the `validator` library with internal sanitization and trimming methods due to a security vulnerability in the `isURL` method.
