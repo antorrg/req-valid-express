@@ -88,7 +88,55 @@ describe('"Validator" class:', () => {
         .get('/test/param/queries?page=2&limit=2&searchField=name&search=This is the message&sortBy=time&order=ASC')
         .expect('Content-Type', /json/)
         .expect(400)
-      expect(response.body).toBe("Invalid value for 'searchField'. Allowed: levelName, message, status")
+      expect(response.body).toBe("Invalid value for 'searchField'. Received: 'name'. Allowed: levelName, message, status")
+    })
+    it('should reject array values for a rule field (400).', async () => {
+      const response = await agent
+        .get('/test/param/queries?page=2&limit=2&searchField=message&searchField=levelName&sortBy=time&order=ASC')
+        .expect('Content-Type', /json/)
+        .expect(400)
+      // Could be invalid string value from type validation or rule rejection; assert status only
+      expect(response.body).toBeDefined()
+    })
+  })
+
+  describe('Method "validateQuery". Rules numeric/boolean edge cases', () => {
+    it('should accept numeric value if it is in allowed list.', async () => {
+      const response = await agent
+        .get('/test/param/rules-num?level=2')
+        .expect('Content-Type', /json/)
+        .expect(200)
+      expect(response.body.message).toBe('Passed middleware')
+      expect(response.body.validData).toEqual({ level: 2 })
+    })
+    it('should reject array for numeric field (400).', async () => {
+      const response = await agent
+        .get('/test/param/rules-num?level=1&level=2')
+        .expect('Content-Type', /json/)
+        .expect(400)
+      expect(response.body).toBeDefined()
+    })
+    it('should accept boolean allowed value.', async () => {
+      const response = await agent
+        .get('/test/param/rules-bool?flag=true')
+        .expect('Content-Type', /json/)
+        .expect(200)
+      expect(response.body.message).toBe('Passed middleware')
+      expect(response.body.validData).toEqual({ flag: true })
+    })
+    it('should reject disallowed boolean value (400).', async () => {
+      const response = await agent
+        .get('/test/param/rules-bool?flag=false')
+        .expect('Content-Type', /json/)
+        .expect(400)
+      expect(response.body).toBeDefined()
+    })
+    it('should reject empty boolean value (400).', async () => {
+      const response = await agent
+        .get('/test/param/rules-bool?flag=')
+        .expect('Content-Type', /json/)
+        .expect(400)
+      expect(response.body).toBeDefined()
     })
   })
 })

@@ -95,6 +95,29 @@ serverTest.get(
   }
 )
 
+// Additional endpoints for testing rules with numeric and boolean types
+serverTest.get(
+  '/test/param/rules-num',
+  Validator.validateQuery(
+    { level: { type: 'int', default: 1 } },
+    { level: [1, 2] }
+  ),
+  (req, res) => {
+    res.status(200).json({ message: 'Passed middleware', data: req.query, validData: req?.context?.query })
+  }
+)
+
+serverTest.get(
+  '/test/param/rules-bool',
+  Validator.validateQuery(
+    { flag: { type: 'boolean', default: false } },
+    { flag: [true] }
+  ),
+  (req, res) => {
+    res.status(200).json({ message: 'Passed middleware', data: req.query, validData: req?.context?.query })
+  }
+)
+
 //paramId----------------------------------------------
 
 serverTest.get(

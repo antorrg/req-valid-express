@@ -1,0 +1,10 @@
+:root {
+  --vp-c-brand: #2ecc71;
+  --vp-c-brand-light: #58d68d;
+  --vp-c-brand-dark: #28b463;
+}
+
+/* Letra más cómoda */
+body {
+  font-size: 16px;
+}

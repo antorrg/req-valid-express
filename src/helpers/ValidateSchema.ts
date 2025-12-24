@@ -49,6 +49,8 @@ export class ValidateSchema {
       try {
         const validated = ValidateSchema.#validateStructure(req.query, schema, undefined, maxDepth);
 
+            /*
+            Bloque antiguo comentado — se conserva para comparación.
             for (const field of Object.keys(rules)) {
               const allowed = rules[field];
               const value = validated[field];
@@ -63,6 +65,10 @@ export class ValidateSchema {
                 );
               }
             }
+            */
+
+            // Usar la implementación centralizada y robusta.
+            ValidateSchema.#allowedValuesByRules(validated, rules);
         req.context = req.context || {};
         req.context.query = validated;
         next();
@@ -194,4 +200,50 @@ export class ValidateSchema {
 
     return AuxValid.validateValue(value, type!, path!, null, sanitize);
   }
+  static #allowedValuesByRules = (validated: any, rules: QueryRule) => {
+    const containsAllowed = (value: any, allowed: (string | number | boolean)[]) => {
+      const t = typeof value;
+      if (t === "number") {
+        return allowed.some((a) => (typeof a === "number" ? a === value : Number(a) === value && !Number.isNaN(Number(a))));
+      }
+      if (t === "boolean") {
+        return allowed.some((a) => (typeof a === "boolean" ? a === value : String(a).toLowerCase() === String(value).toLowerCase()));
+      }
+      if (t === "string") {
+        return allowed.map(String).includes(String(value));
+      }
+      // For other types (object/function/etc.) we don't support comparison here
+      return false;
+    };
+
+    for (const field of Object.keys(rules)) {
+      const allowed = rules[field];
+      const value = validated[field];
+
+      // Do not allow missing/null values when using rules.
+      // Documentación: si vas a usar `rules` asegúrate de proporcionar un `default` en el schema
+      // o de validar la presencia antes de llamar a esta función.
+      if (value === undefined || value === null) {
+        throw new Error(`Invalid value for '${field}': value is required and cannot be null or undefined`);
+      }
+
+      // Arrays are not supported by these rules (debe manejarse explícitamente si fuera necesario)
+      if (Array.isArray(value)) {
+        throw new Error(`Invalid value for '${field}': arrays are not supported by rules`);
+      }
+
+      // If value has an unsupported type, throw clear error
+      const vType = typeof value;
+      if (!(vType === "string" || vType === "number" || vType === "boolean")) {
+        throw new Error(`Invalid value for '${field}': unsupported type '${vType}' for rules`);
+      }
+
+      // Compare according to the runtime type of the validated value
+      if (!containsAllowed(value, allowed)) {
+        throw new Error(`Invalid value for '${field}'. Received: '${String(value)}'. Allowed: ${allowed.join(", ")}`);
+      }
+    }
+
+    return validated;
+  };
 }
