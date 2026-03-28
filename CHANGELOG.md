@@ -16,6 +16,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - 
 ---
+## [1.1.0] - 2026-03-28
+
+### Added
+- **Agnostic Node.js Support**: The library can now be used in any Node.js environment (e.g., Next.js, Electron, NestJS, or raw scripts) independently of Express.
+- Introduced [NodeValidator](cci:2://file:///home/antonio/Documentos/Librerias/req-valid-express/src/NodeValidator.ts:5:0-60:1) class to provide validation methods (`validateBody`, `validateQuery`, [validateRegex](cci:1://file:///home/antonio/Documentos/Librerias/req-valid-express/src/NodeValidator.ts:28:2-42:3), [paramId](cci:1://file:///home/antonio/Documentos/Librerias/req-valid-express/src/NodeValidator.ts:44:2-56:3)) outside the Express request/response cycle.
+- Added [ErrorHandlers](cci:2://file:///home/antonio/Documentos/Librerias/req-valid-express/src/helpers/ErrorHandlers.ts:17:0-29:1) class to standardize and centralize error creation, separating Express HTTP errors from generic Node.js errors with specific error codes.
+- Added [splitObjectProps](cci:1://file:///home/antonio/Documentos/Librerias/req-valid-express/src/helpers/auxValid.ts:18:2-38:3) utility to easily separate flat property objects into structured ID/Data payloads, facilitating integration with different backend payload styles.
+
+### Changed
+- Decoupled `ValidateSchema` core methods (`validateStructure` and `allowedValuesByRules`) by removing their private modifiers, allowing them to be shared seamlessly between Express and Node validators.
+- Relocated and exposed common Regex patterns via the `ValidReg` object for better modularity and public reusability.
+- Removed internal error handling from `auxValid` methods, delegating error management to the parent validators ([Validator](cci:2://file:///home/antonio/Documentos/Librerias/req-valid-express/src/NodeValidator.ts:5:0-60:1) and [NodeValidator](cci:2://file:///home/antonio/Documentos/Librerias/req-valid-express/src/NodeValidator.ts:5:0-60:1)) for a more consistent and predictable error flow.
+- Major refactor of the test suite: Separated tests into three distinct domains (`core`, [node](cci:1://file:///home/antonio/Documentos/Librerias/req-valid-express/src/helpers/ErrorHandlers.ts:24:2-28:3), and [express](cci:1://file:///home/antonio/Documentos/Librerias/req-valid-express/src/helpers/ErrorHandlers.ts:18:2-22:3)) to improve maintainability and strictly isolate testing environments.
+---
 ## [1.0.9] - 2025-11-22
 ### Added
 - Enhanced `validateQuery` method with optional value verification rules. This allows developers to restrict query parameters to a specific set of allowed values (e.g., enums for sorting or status).

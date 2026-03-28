@@ -32,82 +32,82 @@ function isSchema(s: unknown): s is Schema {
 }
 
 export class ValidateSchema {
-  static validatorBody(schema: Schema, maxDepth:number=10) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const validated = ValidateSchema.#validateStructure(req.body, schema,undefined, maxDepth);
-        req.body = validated;
-        next();
-      } catch (err: any) {
-        return next(AuxValid.middError(err.message, 400));
-      }
-    };
-  }
+  // static validatorBody(schema: Schema, maxDepth:number=10) {
+  //   return (req: Request, res: Response, next: NextFunction) => {
+  //     try {
+  //       const validated = ValidateSchema.#validateStructure(req.body, schema,undefined, maxDepth);
+  //       req.body = validated;
+  //       next();
+  //     } catch (err: any) {
+  //       return next(AuxValid.middError(err.message, 400));
+  //     }
+  //   };
+  // }
 
-  static validateQuery(schema: Schema, rules: QueryRule = {}, maxDepth:number = 5) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const validated = ValidateSchema.#validateStructure(req.query, schema, undefined, maxDepth);
+  // static validateQuery(schema: Schema, rules: QueryRule = {}, maxDepth:number = 5) {
+  //   return (req: Request, res: Response, next: NextFunction) => {
+  //     try {
+  //       const validated = ValidateSchema.#validateStructure(req.query, schema, undefined, maxDepth);
 
-            /*
-            Bloque antiguo comentado — se conserva para comparación.
-            for (const field of Object.keys(rules)) {
-              const allowed = rules[field];
-              const value = validated[field];
-              if (value === undefined) continue;
-              // Si el valor existe y NO está en la lista permitida → error
-              if (value !== undefined && !allowed.map(String).includes(String(value))) {
-                return next(
-                  AuxValid.middError(
-                    `Invalid value for '${field}'. Allowed: ${allowed.join(", ")}`,
-                    400
-                  )
-                );
-              }
-            }
-            */
+  //           /*
+  //           Bloque antiguo comentado — se conserva para comparación.
+  //           for (const field of Object.keys(rules)) {
+  //             const allowed = rules[field];
+  //             const value = validated[field];
+  //             if (value === undefined) continue;
+  //             // Si el valor existe y NO está en la lista permitida → error
+  //             if (value !== undefined && !allowed.map(String).includes(String(value))) {
+  //               return next(
+  //                 AuxValid.middError(
+  //                   `Invalid value for '${field}'. Allowed: ${allowed.join(", ")}`,
+  //                   400
+  //                 )
+  //               );
+  //             }
+  //           }
+  //           */
 
-            // Usar la implementación centralizada y robusta.
-            ValidateSchema.#allowedValuesByRules(validated, rules);
-        req.context = req.context || {};
-        req.context.query = validated;
-        next();
-      } catch (err: any) {
-        return next(AuxValid.middError(err.message, 400));
-      }
-    };
-  }
+  //           // Usar la implementación centralizada y robusta.
+  //           ValidateSchema.#allowedValuesByRules(validated, rules);
+  //       req.context = req.context || {};
+  //       req.context.query = validated;
+  //       next();
+  //     } catch (err: any) {
+  //       return next(AuxValid.middError(err.message, 400));
+  //     }
+  //   };
+  // }
 
-  static validateHeaders(schema: Schema, maxDepth:number=3) {
-    return (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const headers = req.headers || {};
-        const contentType = headers["content-type"];
-        if (!contentType) throw new Error("Missing required header: content-type");
+  // static validateHeaders(schema: Schema, maxDepth:number=3) {
+  //   return (req: Request, res: Response, next: NextFunction) => {
+  //     try {
+  //       const headers = req.headers || {};
+  //       const contentType = headers["content-type"];
+  //       if (!contentType) throw new Error("Missing required header: content-type");
 
-        const lowerContentType = contentType.toLowerCase();
-        if (
-          lowerContentType !== "application/json" &&
-          !lowerContentType.startsWith("multipart/form-data")
-        ) {
-          throw new Error("Invalid Content-Type header");
-        }
+  //       const lowerContentType = contentType.toLowerCase();
+  //       if (
+  //         lowerContentType !== "application/json" &&
+  //         !lowerContentType.startsWith("multipart/form-data")
+  //       ) {
+  //         throw new Error("Invalid Content-Type header");
+  //       }
 
-        const validated = schema
-          ? ValidateSchema.#validateStructure(headers, schema, "headers", maxDepth)
-          : { "content-type": contentType };
+  //       const validated = schema
+  //         ? ValidateSchema.#validateStructure(headers, schema, "headers", maxDepth)
+  //         : { "content-type": contentType };
 
-        req.context = req.context || {};
-        req.context.headers = validated;
+  //       req.context = req.context || {};
+  //       req.context.headers = validated;
 
-        next();
-      } catch (err: any) {
-        return next(AuxValid.middError(err.message, 400));
-      }
-    };
-  }
+  //       next();
+  //     } catch (err: any) {
+  //       return next(AuxValid.middError(err.message, 400));
+  //     }
+  //   };
+  // }
 
-  static #validateStructure(
+  static validateStructure(
     data: any,
     schema: Schema | FieldSchema | string,
     path?: string,
@@ -122,7 +122,7 @@ export class ValidateSchema {
         throw new Error(`Expected array at ${path || "root"}`);
       }
       return data.map((item, i) =>
-        ValidateSchema.#validateStructure(item, schema[0] as any, `${path}[${i}]`, maxDepth,depth + 1)
+        ValidateSchema.validateStructure(item, schema[0] as any, `${path}[${i}]`, maxDepth,depth + 1)
       );
     }
 
@@ -153,7 +153,7 @@ export class ValidateSchema {
           }
         }
 
-        result[key] = ValidateSchema.#validateStructure(
+        result[key] = ValidateSchema.validateStructure(
           value,
           fieldSchema as any,
           fullPath,
@@ -200,7 +200,7 @@ export class ValidateSchema {
 
     return AuxValid.validateValue(value, type!, path!, null, sanitize);
   }
-  static #allowedValuesByRules = (validated: any, rules: QueryRule) => {
+ /* static allowedValuesByRules = (validated: any, rules: QueryRule) => {
     const containsAllowed = (value: any, allowed: (string | number | boolean)[]) => {
       const t = typeof value;
       if (t === "number") {
@@ -246,4 +246,46 @@ export class ValidateSchema {
 
     return validated;
   };
+  */
+ static allowedValuesByRules(validated: any, rules: QueryRule) {
+  for (const field of Object.keys(rules)) {
+    if (!(field in validated)) {
+      throw new Error(`Rule defined for unknown field '${field}'`);
+    }
+
+    const allowed = rules[field];
+    const value = validated[field];
+
+    if (value === undefined || value === null) {
+      throw new Error(
+        `Invalid value for '${field}': value is required and cannot be null or undefined`
+      );
+    }
+
+    if (Array.isArray(value)) {
+      throw new Error(
+        `Invalid value for '${field}': arrays are not supported by rules`
+      );
+    }
+
+    const valueType = typeof value;
+    if (!["string", "number", "boolean"].includes(valueType)) {
+      throw new Error(
+        `Invalid value for '${field}': unsupported type '${valueType}' for rules`
+      );
+    }
+
+    const isAllowed = allowed.some((candidate) => {
+      return typeof candidate === valueType && candidate === value;
+    });
+
+    if (!isAllowed) {
+      throw new Error(
+        `Invalid value for '${field}'. Received: '${String(value)}'. Allowed: ${allowed.join(", ")}`
+      );
+    }
+  }
+
+  return validated;
+}
 }

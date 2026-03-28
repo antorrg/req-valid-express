@@ -89,14 +89,14 @@ const app = express();
 
 // Schema de ejemplo para validar el body
 const userSchema: Schema = {
-  body: {
+
     name: { type: "string", required: true, sanitize:{
       trim: true,
       escape: true,
       lowercase: true
     }},
     age: { type: "number", default: 18 }
-  }
+  
 };
 
 app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {

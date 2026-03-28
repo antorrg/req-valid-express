@@ -8,12 +8,35 @@ export type SanitizeOptions = {
 
 
 export class AuxValid {
-   static middError(message: string, status?: number): Error & { status: number } {
-    const error = new Error(message) as Error & { status: number };
-    error.status = status || 500;
-    return error;
+  static ValidReg = {
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    PASSWORD: /^(?=.*[A-Z]).{8,}$/,
+    UUIDv4: /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    INT: /^\d+$/, // Solo enteros positivos
+    OBJECT_ID: /^[0-9a-fA-F]{24}$/, // ObjectId de MongoDB
+    FIREBASE_ID: /^[A-Za-z0-9_-]{20}$/, // Firebase push ID
   }
+  static splitObjectProps<T extends Record<string, any>, K extends keyof T = keyof T>(
+      obj: T,
+      propsToExtract: K[] = [] as unknown as K[]
+    ): Pick<T, K> & { rest: Omit<T, K> } {
+      const { rest, extracted } = (Object.entries(obj) as [string, any][]).reduce(
+        (
+          acc: { rest: Partial<Omit<T, K>>; extracted: Partial<Pick<T, K>> },
+          [key, value]
+        ) => {
+          const k = key as unknown as K;
+          if (propsToExtract.includes(k)) (acc.extracted as any)[k] = value;
+          else (acc.rest as any)[key as Exclude<keyof T, K>] = value;
+          return acc;
+        },
+        { rest: {} as Partial<Omit<T, K>>, extracted: {} as Partial<Pick<T, K>> }
+      );
 
+      return { rest: rest as Omit<T, K>, ...(extracted as Pick<T, K>) } as Pick<T, K> & {
+        rest: Omit<T, K>;
+      };
+  }
   // Nueva función para manejar valores por defecto según el tipo
   static #getDefaultValue (type:string):any {
     switch (type) {

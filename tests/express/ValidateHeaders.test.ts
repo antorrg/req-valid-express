@@ -1,5 +1,5 @@
 import session from 'supertest'
-import serverTest from './testHelpers/serverTest.help.ts'
+import serverTest from '../testHelpers/serverTest.help.ts'
 const agent = session(serverTest)
 import {describe,it, expect} from 'vitest'
 

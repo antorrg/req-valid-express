@@ -89,7 +89,6 @@ const app = express();
 // Example schema to validate the body
 // ⚠️ Best practice: always use the schema generator, not manual objects
 const userSchema: Schema = {
-  body: {
     name: { 
       type: "string", 
       required: true, 
@@ -100,7 +99,6 @@ const userSchema: Schema = {
       }
     },
     age: { type: "number", default: 18 }
-  }
 };
 
 // Basic usage: default maxDepth
