@@ -24,7 +24,7 @@ export class ErrorHandlers {
 
   static nodeError(message: string, code?: ErrorCodeType): Error & { code: string } {
     const error = new Error(message) as Error & { code: string };
-    error.code = ErrorCode[code ?? 'ERR_INTERNAL'];
+    error.code = ErrorCode[code ?? 'VALIDATION_ERROR'];
     return error;
   }
 }

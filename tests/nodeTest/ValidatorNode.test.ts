@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { NodeValidator } from '../../src/NodeValidator.js';
-import { Schema } from '../../src/helpers/ValidateSchema.js';
-import { ErrorCode } from '../../src/helpers/ErrorHandlers.js';
+import { Schema } from '../../src/core/ValidationEngine.js';
+import { ErrorCode } from '../../src/core/ErrorHandlers.js';
 
 describe('ValidatorNode', () => {
   describe('validateBody', () => {
@@ -15,18 +15,13 @@ describe('ValidatorNode', () => {
       expect(result).toEqual({ name: '  Alice  ', age: 25 }); // Standard schema typing
     });
 
-    it('should return a nodeError with VALIDATION_ERROR on missing data', () => {
+    it('should throw a nodeError with VALIDATION_ERROR on missing data', () => {
       const schema: Schema = { name: 'string', age: 'int' };
       const data = { name: 'Alice' }; // missing age
       
-      const result = NodeValidator.validateBody(data, schema);
-      
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.VALIDATION_ERROR);
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.validateBody(data, schema)).toThrowError(
+        expect.objectContaining({ code: ErrorCode.VALIDATION_ERROR })
+      );
     });
   });
 
@@ -42,19 +37,14 @@ describe('ValidatorNode', () => {
       expect(result).toEqual({ status: 'active', limit: 10 });
     });
 
-    it('should return nodeError with VALIDATION_ERROR if rule is violated', () => {
+    it('should throw a nodeError with VALIDATION_ERROR if rule is violated', () => {
       const schema: Schema = { status: 'string', limit: 'int' };
       const rules = { status: ['active', 'inactive'] };
       const data = { status: 'pending', limit: '10' }; // pending not allowed
       
-      const result = NodeValidator.validateQuery(data, schema, rules);
-      
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.VALIDATION_ERROR);
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.validateQuery(data, schema, rules)).toThrowError(
+        expect.objectContaining({ code: ErrorCode.VALIDATION_ERROR })
+      );
     });
   });
 
@@ -66,29 +56,20 @@ describe('ValidatorNode', () => {
       expect(result).toBe(data);
     });
 
-    it('should return REQUIRED_FIELD_MISSING error if field is missing', () => {
+    it('should throw REQUIRED_FIELD_MISSING error if field is missing', () => {
       const data = {};
-      const result = NodeValidator.validateRegex(data, NodeValidator.ValidReg.EMAIL, 'email', null);
       
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.REQUIRED_FIELD_MISSING);
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.validateRegex(data, NodeValidator.ValidReg.EMAIL, 'email', null)).toThrowError(
+        expect.objectContaining({ code: ErrorCode.REQUIRED_FIELD_MISSING })
+      );
     });
 
-    it('should return INVALID_FORMAT error if regex fails', () => {
+    it('should throw INVALID_FORMAT error if regex fails', () => {
       const data = { email: 'invalid-email' };
-      const result = NodeValidator.validateRegex(data, NodeValidator.ValidReg.EMAIL, 'email', 'Must be valid email');
       
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.INVALID_FORMAT);
-        expect(result.message).toContain('Must be valid email');
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.validateRegex(data, NodeValidator.ValidReg.EMAIL, 'email', 'Must be valid email')).toThrowError(
+        expect.objectContaining({ code: ErrorCode.INVALID_FORMAT, message: expect.stringContaining('Must be valid email') })
+      );
     });
   });
 
@@ -100,28 +81,20 @@ describe('ValidatorNode', () => {
       expect(result).toBe('123');
     });
 
-    it('should return REQUIRED_FIELD_MISSING error if field is missing', () => {
+    it('should throw REQUIRED_FIELD_MISSING error if field is missing', () => {
       const data = {};
-      const result = NodeValidator.paramId(data, 'userId', NodeValidator.ValidReg.INT);
       
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.REQUIRED_FIELD_MISSING);
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.paramId(data, 'userId', NodeValidator.ValidReg.INT)).toThrowError(
+        expect.objectContaining({ code: ErrorCode.REQUIRED_FIELD_MISSING })
+      );
     });
 
-    it('should return INVALID_INPUT error if validator fails', () => {
+    it('should throw INVALID_INPUT error if validator fails', () => {
       const data = { userId: 'abc' };
-      const result = NodeValidator.paramId(data, 'userId', NodeValidator.ValidReg.INT);
       
-      expect(result).toBeInstanceOf(Error);
-      if (result instanceof Error && 'code' in result) {
-        expect(result.code).toBe(ErrorCode.INVALID_INPUT);
-      } else {
-        throw new Error('Expected nodeError');
-      }
+      expect(() => NodeValidator.paramId(data, 'userId', NodeValidator.ValidReg.INT)).toThrowError(
+        expect.objectContaining({ code: ErrorCode.INVALID_INPUT })
+      );
     });
   });
 

@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import type { FieldSchema ,Schema } from "../ValidateSchema.js";
+import type { FieldSchema ,Schema } from "../ValidationEngine.js";
 
 
 // 🔽 Devolvemos un Schema parcial (ej: { campo: { type: "string" } })

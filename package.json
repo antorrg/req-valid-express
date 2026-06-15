@@ -14,14 +14,13 @@
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist",
-    "src/express-context.d.ts"
+    "dist"
   ],
   "bin": {
     "validate-schema": "./dist/esm/cli.js"
   },
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs && cp src/express-context.d.ts dist/types/",
+    "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "npm run build && vitest run",

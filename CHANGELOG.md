@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - 
 
+---
+
+## [1.1.1] - 2026-06-16
+
 ### Changed
-- 
+- Updated `moduleResolution` to `"bundler"` in `tsconfig.json` to resolve TypeScript deprecation warnings while maintaining compatibility with both CJS and ESM builds.
 
 ### Fixed
-- 
+- Fixed `NodeValidator` error handling by throwing validation errors instead of returning `Error` instances, ensuring proper exception propagation.
 
 ### Removed
 - 

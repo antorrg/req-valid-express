@@ -18,6 +18,6 @@ features:
     details: Full TypeScript support with automatic type inference.
   - title: Express Native
     details: Built specifically for Express.js, integrating seamlessly as middleware.
-  - title: Zod Powered
-    details: Uses the power of Zod for schema definition and validation.
+  - title: Independent Validation
+    details: Fully self-contained library for schema definition and validation, leveraging inquirer for schema creation.
 ---

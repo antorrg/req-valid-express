@@ -2,7 +2,7 @@ import promptForField from "./generate.js";
 import fs from "fs/promises";
 import inquirer from "inquirer";
 import path from "path";
-import type { Schema } from "../ValidateSchema.js";
+import type { Schema } from "../ValidationEngine.js";
 
 export const buildSchema = async () => {
   const { pathName } = await inquirer.prompt<{ pathName: string }>({

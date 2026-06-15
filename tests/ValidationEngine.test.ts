@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { ValidateSchema, Schema } from '../src/helpers/ValidateSchema.js';
+import { ValidationEngine, Schema } from '../src/core/ValidationEngine.js';
 
-describe('ValidateSchema', () => {
+describe('ValidationEngine', () => {
   describe('validateStructure', () => {
     it('should validate simple structure correctly', () => {
       const schema: Schema = {
@@ -18,7 +18,7 @@ describe('ValidateSchema', () => {
         score: '15.5',
       };
       
-      const result = ValidateSchema.validateStructure(data, schema);
+      const result = ValidationEngine.validateStructure(data, schema);
       
       expect(result).toEqual({
         name: 'Test Name',
@@ -31,7 +31,7 @@ describe('ValidateSchema', () => {
     it('should strip undeclared properties', () => {
       const schema: Schema = { name: 'string' };
       const data = { name: 'Test', extra: 'removeme' };
-      const result = ValidateSchema.validateStructure(data, schema);
+      const result = ValidationEngine.validateStructure(data, schema);
       expect(result).toEqual({ name: 'Test' });
       expect(result).not.toHaveProperty('extra');
     });
@@ -39,7 +39,7 @@ describe('ValidateSchema', () => {
     it('should throw an error if missing required fields', () => {
       const schema: Schema = { name: 'string', email: 'string' };
       const data = { name: 'Test' };
-      expect(() => ValidateSchema.validateStructure(data, schema)).toThrow(/Missing field: email/);
+      expect(() => ValidationEngine.validateStructure(data, schema)).toThrow(/Missing field: email/);
     });
 
     it('should use default values if provided and field is missing', () => {
@@ -48,7 +48,7 @@ describe('ValidateSchema', () => {
         role: { type: 'string', default: 'user' } 
       };
       const data = { name: 'Test' };
-      const result = ValidateSchema.validateStructure(data, schema);
+      const result = ValidationEngine.validateStructure(data, schema);
       expect(result).toEqual({ name: 'Test', role: 'user' });
     });
 
@@ -57,14 +57,14 @@ describe('ValidateSchema', () => {
         tags: ['string'] 
       };
       const data = { tags: ['a', 'b', 'c'] };
-      const result = ValidateSchema.validateStructure(data, schema);
+      const result = ValidationEngine.validateStructure(data, schema);
       expect(result).toEqual({ tags: ['a', 'b', 'c'] });
     });
 
     it('should throw errors if array elements do not match schema', () => {
       const schema: Schema = { tags: ['int'] };
       const data = { tags: ['1', '2', 'notanumber'] };
-      expect(() => ValidateSchema.validateStructure(data, schema)).toThrow(/Invalid integer value/);
+      expect(() => ValidationEngine.validateStructure(data, schema)).toThrow(/Invalid integer value/);
     });
 
     it('should trim and escape strings based on sanitize options', () => {
@@ -72,7 +72,7 @@ describe('ValidateSchema', () => {
         comment: { type: 'string', sanitize: { trim: true, escape: true } }
       };
       const data = { comment: '  <script>alert("XSS")</script>  ' };
-      const result = ValidateSchema.validateStructure(data, schema);
+      const result = ValidationEngine.validateStructure(data, schema);
       expect(result.comment).toBe('&lt;script&gt;alert(&quot;XSS&quot;)&lt;&#x2F;script&gt;');
     });
 
@@ -85,7 +85,7 @@ describe('ValidateSchema', () => {
          }
        };
        const data = { level1: { level2: { level3: 'test' } } };
-       expect(() => ValidateSchema.validateStructure(data, schema, undefined, 1)).toThrow(/Schema validation exceeded maximum depth/);
+       expect(() => ValidationEngine.validateStructure(data, schema, undefined, 1)).toThrow(/Schema validation exceeded maximum depth/);
     });
   });
 
@@ -93,20 +93,20 @@ describe('ValidateSchema', () => {
     it('should strictly allow values specified in the rule', () => {
       const rules = { role: ['admin', 'user'], status: [1, 2] };
       const data = { role: 'user', status: 1 };
-      const result = ValidateSchema.allowedValuesByRules(data, rules);
+      const result = ValidationEngine.allowedValuesByRules(data, rules);
       expect(result).toEqual(data);
     });
 
     it('should throw an error if a value does not match allowed rules', () => {
       const rules = { role: ['admin', 'user'] };
       const data = { role: 'guest' };
-      expect(() => ValidateSchema.allowedValuesByRules(data, rules)).toThrow(/Invalid value for 'role'. Received: 'guest'. Allowed: admin, user/);
+      expect(() => ValidationEngine.allowedValuesByRules(data, rules)).toThrow(/Invalid value for 'role'. Received: 'guest'. Allowed: admin, user/);
     });
 
     it('should throw if target value is missing in rules validation', () => {
       const rules = { state: [1, 2] };
       const data = { role: 'user' };
-      expect(() => ValidateSchema.allowedValuesByRules(data, rules))
+      expect(() =>ValidationEngine.allowedValuesByRules(data, rules))
       .toThrow(/Rule defined for unknown field 'state'/);
     });
   });
@@ -114,7 +114,7 @@ describe('ValidateSchema', () => {
   const rules = { state: [1, 2] };
   const data = { state: undefined };
 
-  expect(() => ValidateSchema.allowedValuesByRules(data, rules))
+  expect(() => ValidationEngine.allowedValuesByRules(data, rules))
     .toThrow(/Invalid value for 'state': value is required and cannot be null or undefined/);
   });
 });

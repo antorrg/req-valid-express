@@ -37,16 +37,6 @@ export class AuxValid {
         rest: Omit<T, K>;
       };
   }
-  // Nueva función para manejar valores por defecto según el tipo
-  static #getDefaultValue (type:string):any {
-    switch (type) {
-      case 'boolean': return false
-      case 'int': return 1
-      case 'float': return 1.0
-      case 'string': return ''
-      default: return null
-    }
-  }
 
   static #validateBoolean (value:string):boolean {
     if (typeof value === 'boolean') return value
@@ -93,9 +83,7 @@ static #trimString(str: string): string {
     if (value instanceof String || value instanceof Number || value instanceof Boolean) {
       value = value.valueOf()
     }
-  }
-
-
+   }
     switch (fieldType) {
       case 'boolean':
         return AuxValid.#validateBoolean(value)

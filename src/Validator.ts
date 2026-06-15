@@ -1,15 +1,44 @@
-import {Request, Response, NextFunction} from 'express'
-import { AuxValid } from './helpers/auxValid.js'
-import {ValidateSchema, Schema, QueryRule } from './helpers/ValidateSchema.js'
-import { ErrorHandlers } from './helpers/ErrorHandlers.js';
+export interface ReqContext {
+    query?: Record<string, any>;
+    body?: Record<string, any>;
+    headers?: Record<string, any>;
+}
+
+export interface ExpressRequest {
+    body: any;
+    query: any;
+    headers: Record<string, any>;
+    params: Record<string, string>;
+    context?: ReqContext;
+    [key: string]: any;
+}
+
+export interface ExpressResponse {
+    [key: string]: any;
+}
+
+export interface ExpressNextFunction {
+    (err?: any): void;
+}
+
+declare global {
+    namespace Express {
+        interface Request {
+            context?: ReqContext;
+        }
+    }
+}
+import { AuxValid } from './core/auxValid.js'
+import {ValidationEngine, Schema, QueryRule } from './core/ValidationEngine.js'
+import { ErrorHandlers } from './core/ErrorHandlers.js';
 
 
 export class Validator {
 
     static validateBody(schema: Schema, maxDepth:number=10) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
       try {
-        const validated = ValidateSchema.validateStructure(req.body, schema,undefined, maxDepth);
+        const validated = ValidationEngine.validateStructure(req.body, schema,undefined, maxDepth);
         req.body = validated;
         next();
       } catch (err: any) {
@@ -19,11 +48,11 @@ export class Validator {
   }
 
   static validateQuery(schema: Schema, rules: QueryRule = {}, maxDepth:number = 5) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
       try {
-        const validated = ValidateSchema.validateStructure(req.query, schema, undefined, maxDepth);
+        const validated = ValidationEngine.validateStructure(req.query, schema, undefined, maxDepth);
    
-            ValidateSchema.allowedValuesByRules(validated, rules);
+            ValidationEngine.allowedValuesByRules(validated, rules);
         req.context = req.context || {};
         req.context.query = validated;
         next();
@@ -34,7 +63,7 @@ export class Validator {
   }
 
   static validateHeaders(schema: Schema, maxDepth:number=3) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
       try {
         const headers = req.headers || {};
         const contentType = headers["content-type"];
@@ -49,7 +78,7 @@ export class Validator {
         }
 
         const validated = schema
-          ? ValidateSchema.validateStructure(headers, schema, "headers", maxDepth)
+          ? ValidationEngine.validateStructure(headers, schema, "headers", maxDepth)
           : { "content-type": contentType };
 
         req.context = req.context || {};
@@ -63,7 +92,7 @@ export class Validator {
   }
 
   static validateRegex (validRegex:RegExp, nameOfField: string, message:string|null) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
       if (!validRegex || !nameOfField || nameOfField.trim() === '') {
         return next(ErrorHandlers.expressError('Missing parameters in function!', 400))
       }
@@ -80,7 +109,7 @@ export class Validator {
   }
 
   static paramId (fieldName:string, validator:any) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: ExpressRequest, res: ExpressResponse, next: ExpressNextFunction) => {
       const id = req.params[fieldName]
       if (!id) {
         next(ErrorHandlers.expressError(`Missing ${fieldName}`, 400)); return
