@@ -89,7 +89,7 @@ const app = express();
 const userSchema: Schema = {
     name: { 
       type: "string", 
-      // los campos son requeridos por defecto, usar optional: true si es necesario
+      // todos los campos son estrictamente requeridos. Si un campo puede faltar, asígnale un 'default'.
       sanitize:{
         trim: true,
         escape: true,
@@ -224,11 +224,10 @@ Usa esta clase para entornos fuera de Express (ej. Next.js, Electron, WebSockets
 Cada esquema soporta:
 
 * `type`: `"string"`, `"int"`, `"float"`,`"boolean"`.
-* `optional`: `true | false` (los campos son requeridos por defecto)
-* `default`: valor por defecto si falta
+* `default`: valor por defecto si falta (hace que el campo sea efectivamente opcional)
 * `sanitize`: objeto de sanitizadores (`trim`, `escape`, etc.)
 
-Ejemplo de schema con regex y sanitización:
+Ejemplo de schema con sanitización:
 
 ```ts
 const schema = {

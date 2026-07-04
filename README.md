@@ -91,7 +91,7 @@ const app = express();
 const userSchema: Schema = {
     name: { 
       type: "string", 
-      // fields are required by default, use optional: true if needed
+      // All fields are strictly required. If a field can be omitted, provide a 'default' value.
       sanitize: {
         trim: true,
         escape: true,
@@ -228,10 +228,10 @@ Use this class for environments outside of Express (e.g., Next.js, Electron, Web
 Each schema supports:
 
 * `type`: `"string"`, `"int"`, `"float"`, `"boolean"`
-* `default`: default value if missing
+* `default`: default value if missing (makes the field effectively optional)
 * `sanitize`: sanitizers (`trim`, `escape`, `lowercase`, etc.)
 
-Example schema with regex and sanitization:
+Example schema with sanitization:
 
 ```ts
 const schema = {
