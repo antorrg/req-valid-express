@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import {buildSchema } from "./core/createSchema/index.js"
+import { buildSchema } from "./core/createSchema/index.js";
 
 
 async function main() {

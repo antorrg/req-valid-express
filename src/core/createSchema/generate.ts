@@ -1,41 +1,25 @@
-import inquirer from "inquirer";
-import type { FieldSchema ,Schema } from "../ValidationEngine.js";
-
+import { promptInput, promptConfirm, promptList, promptCheckbox } from "./cliNative.js";
+import type { FieldSchema, Schema } from "../ValidationEngine.js";
 
 // 🔽 Devolvemos un Schema parcial (ej: { campo: { type: "string" } })
-export default async function promptForField(): Promise<Schema> {
+export default async function promptForField(context?: string): Promise<Schema> {
   const field: Schema = {};
 
-  const { name } = await inquirer.prompt<{ name: string }>({
-    type: "input",
-    name: "name",
-    message: "Field name:",
-  });
+  const fieldPrompt = context ? `Field name (for ${context}):` : "Field name:";
+  const name = await promptInput(fieldPrompt);
 
-  const { kind } = await inquirer.prompt<{ kind: string }>({
-    type: "list",
-    name: "kind",
-    message: `Select type of field "${name}":`,
-    choices: ["string", "int", "float", "boolean", "object", "array"],
-  });
+  const kind = await promptList<string>(`Select type of field "${name}":`, [
+    "string", "int", "float", "boolean", "object", "array"
+  ]);
 
   if (["string", "int", "float", "boolean"].includes(kind)) {
     const fieldConfig: FieldSchema = { type: kind as FieldSchema["type"] };
 
-
-    const { hasDefault } = await inquirer.prompt<{ hasDefault: boolean }>({
-      type: "confirm",
-      name: "hasDefault",
-      message: "Do you want to set a default value?",
-      default: false,
-    });
+    const hasDefault = await promptConfirm("Do you want to set a default value?", { default: false });
 
     if (hasDefault) {
-      const { defaultValue } = await inquirer.prompt<{ defaultValue: string }>({
-        type: "input",
-        name: "defaultValue",
-        message: "Enter default value:",
-        validate: (input) => input.length > 0,
+      const defaultValue = await promptInput("Enter default value:", {
+        validate: (input) => input.length > 0 || "Value is required",
       });
 
       fieldConfig.default =
@@ -49,17 +33,12 @@ export default async function promptForField(): Promise<Schema> {
     }
 
     if (kind === "string") {
-      const { sanitizers } = await inquirer.prompt<{ sanitizers: string[] }>({
-        type: "checkbox",
-        name: "sanitizers",
-        message: "Select sanitizers to apply:",
-        choices: [
-          { name: "trim", value: "trim" },
-          { name: "escape", value: "escape" },
-          { name: "toLowerCase", value: "lowercase" },
-          { name: "toUpperCase", value: "uppercase" },
-        ],
-      });
+      const sanitizers = await promptCheckbox<string>("Select sanitizers to apply:", [
+        { name: "trim", value: "trim" },
+        { name: "escape", value: "escape" },
+        { name: "toLowerCase", value: "lowercase" },
+        { name: "toUpperCase", value: "uppercase" },
+      ]);
 
       if (sanitizers.length > 0) {
         fieldConfig.sanitize = {};
@@ -77,58 +56,38 @@ export default async function promptForField(): Promise<Schema> {
     const subfields: Schema = {};
     let addMore = true;
     while (addMore) {
-      const child = await promptForField();
+      const child = await promptForField(`object "${name}"`);
       Object.assign(subfields, child);
-      const { cont } = await inquirer.prompt<{ cont: boolean }>({
-        type: "confirm",
-        name: "cont",
-        message: "Add another field to the object?",
-        default: true,
-      });
-      addMore = cont;
+      addMore = await promptConfirm("Add another field to the object?", { default: true });
     }
     field[name] = subfields;
     return field;
   }
 
   if (kind === "array") {
-    const { itemType } = await inquirer.prompt<{ itemType: string }>({
-      type: "list",
-      name: "itemType",
-      message: "Select type for array items:",
-      choices: ["string", "int", "float", "boolean", "object"],
-    });
+    const itemType = await promptList<string>("Select type for array items:", [
+      "string", "int", "float", "boolean", "object"
+    ]);
 
     if (itemType === "object") {
       const subfields: Schema = {};
       let addMore = true;
       while (addMore) {
-        const child = await promptForField();
+        const child = await promptForField(`items of array "${name}"`);
         Object.assign(subfields, child);
-        const { cont } = await inquirer.prompt<{ cont: boolean }>({
-          type: "confirm",
-          name: "cont",
-          message: "Add another field in the array?",
-          default: true,
-        });
-        addMore = cont;
+        addMore = await promptConfirm("Add another field in the array?", { default: true });
       }
       field[name] = [subfields];
     } else {
       const itemSchema: FieldSchema = { type: itemType as FieldSchema["type"] };
 
       if (itemType === "string") {
-        const { sanitizers } = await inquirer.prompt<{ sanitizers: string[] }>({
-          type: "checkbox",
-          name: "sanitizers",
-          message: "Select sanitizers for array items:",
-          choices: [
-            { name: "trim", value: "trim" },
-            { name: "escape", value: "escape" },
-            { name: "toLowerCase", value: "lowercase" },
-            { name: "toUpperCase", value: "uppercase" },
-          ],
-        });
+        const sanitizers = await promptCheckbox<string>("Select sanitizers for array items:", [
+          { name: "trim", value: "trim" },
+          { name: "escape", value: "escape" },
+          { name: "toLowerCase", value: "lowercase" },
+          { name: "toUpperCase", value: "uppercase" },
+        ]);
 
         if (sanitizers.length > 0) {
           itemSchema.sanitize = {};

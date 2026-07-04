@@ -26,7 +26,7 @@ La librería reescribe `req.body` y crea los objetos `req.context.query` y `req.
 
 Si un campo requerido no está presente, se lanzará un error con estado HTTP 400. La librería sí permite definir valores por defecto: si un campo llega vacío o no está presente y tiene un valor por defecto declarado en el esquema, dicho valor será asignado automáticamente.
 
-Esta puede utilizarse en proyectos que utilicen `commonjs`, `ESM` (ecmascript modules) o `Typescript`.
+Esta puede utilizarse en proyectos que utilicen `commonjs`, `ESM` (ecmascript modules) o `TypeScript`.
 
 ## Instalación
 

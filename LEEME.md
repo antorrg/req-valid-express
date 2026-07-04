@@ -1,9 +1,7 @@
 
 # req-valid-express
 
-Middleware para validar **body**, **query**, **headers** y **params** en aplicaciones [Express](https://expressjs.com/). 
-
-
+Motor de validación de esquemas tipados para Node.js. Incluye un middleware dedicado para **Express** (body, query, headers) y un validador agnóstico para **Next.js, Electron, WebSockets**, y más.  
 Incluye soporte para **TypeScript**, **CommonJS** y **ESM**.
 
 [![npm version](https://img.shields.io/npm/v/req-valid-express.svg)](https://www.npmjs.com/package/req-valid-express)
@@ -41,7 +39,7 @@ El generador es interactivo y le guiará paso a paso:
 
 Puede generar los esquemas de dos maneras:  
 
-1. **Usando npx (recomendado, no necesita instalar nada):**
+1. **Usando npx (recomendado, no requiere instalación global):**
 ```bash
 
    npx validate-schema
@@ -89,28 +87,29 @@ const app = express();
 
 // Schema de ejemplo para validar el body
 const userSchema: Schema = {
-
-    name: { type: "string", required: true, sanitize:{
-      trim: true,
-      escape: true,
-      lowercase: true
-    }},
-    age: { type: "number", default: 18 }
-  
+    name: { 
+      type: "string", 
+      // los campos son requeridos por defecto, usar optional: true si es necesario
+      sanitize:{
+        trim: true,
+        escape: true,
+        lowercase: true
+      }
+    },
+    age: { type: "int", default: 18 }
 };
 
-app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
- 
+app.post("/users", Validator.validateBody(userSchema), (req, res) => {
   res.json({ user: req.body });
 });
 // Uso básico: default maxDepth
-app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
+app.post("/users", Validator.validateBody(userSchema), (req, res) => {
   res.json({ user: req.body });
 });
 
 // Uso avanzado: configuer el maxDepth para validar objetos profundamente anidados (ej: documentos de MongoDB)
 
-app.post("/deep-users", Validator.validateBody(userSchema.body, 15), (req, res) => {
+app.post("/deep-users", Validator.validateBody(userSchema, 15), (req, res) => {
   res.json({ user: req.body });
 });
 
@@ -128,8 +127,8 @@ const app = express();
 
 
 const querySchema = {
-  page: { type: "number", default: 1 },
-  limit: { type: "number", default: 10 }
+  page: { type: "int", default: 1 },
+  limit: { type: "int", default: 10 }
 };
 
 app.get("/items", Validator.validateQuery(querySchema), (req, res) => {
@@ -199,8 +198,10 @@ app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
 
 ## 📖 API
 
-La clase principal es `Validator`.
-Provee métodos para validar diferentes partes de la request:
+### 1. `Validator` (Para Express)
+La clase principal para integraciones con Express.
+Provee métodos tipo middleware para validar diferentes partes de la petición HTTP:
+
 - **validateBody(schema)** 
 - **validateQuery(schema)** 
 - **validateHeaders(schema)**
@@ -208,14 +209,22 @@ Provee métodos para validar diferentes partes de la request:
 - **paramId('param', method):** validación de parámetros (req.params)
 - **validReg:** provee los regex para paramId (opcional)
 
-> Cualquier campo no declarado en el esquema será eliminado.
+### 2. `NodeValidator` (Para Node.js agnóstico)
+Usa esta clase para entornos fuera de Express (ej. Next.js, Electron, WebSockets). Recibe los datos directamente en lugar de extraerlos de la request de Express.
+
+- **validateBody(data, schema)** (Alias: **validatePayload**)
+- **validateQuery(data, schema)** (Alias: **validateOptions**)
+- **paramId(data, 'param', method)** (Alias: **validateId**)
+- **validateRegex(data, regex, 'field', message(optional))**
+
+> **Nota:** Cualquier campo no declarado en el esquema será eliminado.
 > Solo pasarán los que cumplan la validación o tengan un valor por defecto.
 
 
 Cada esquema soporta:
 
 * `type`: `"string"`, `"int"`, `"float"`,`"boolean"`.
-* `required`: `true | false`
+* `optional`: `true | false` (los campos son requeridos por defecto)
 * `default`: valor por defecto si falta
 * `sanitize`: objeto de sanitizadores (`trim`, `escape`, etc.)
 
@@ -223,7 +232,7 @@ Ejemplo de schema con regex y sanitización:
 
 ```ts
 const schema = {
-  email: { type: "string", required: true, sanitize: {trim: true} }
+  email: { type: "string", sanitize: {trim: true} }
 };
 ```
 
@@ -233,15 +242,14 @@ const schema = {
 
 La librería añade la propiedad `context` al objeto `req` de Express para acceder a los valores validados.
 
-> La propiedad `context` se añade al objeto `req` de Express.  
-> Es opcional en body y headers, pero obligatoria para queries si se usa Express 5
+> La librería sobreescribe `req.body` con los datos validados automáticamente.
+> La propiedad `context` se añade para almacenar `query` y `headers` validados sin mutar las propiedades de solo lectura en Express 5.
 
 ```ts
 declare global {
   namespace Express {
     interface Request {
       context: {
-        body?: any;
         query?: any;
         headers?: any;
       };

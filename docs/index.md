@@ -19,5 +19,5 @@ features:
   - title: Express Native
     details: Built specifically for Express.js, integrating seamlessly as middleware.
   - title: Independent Validation
-    details: Fully self-contained library for schema definition and validation, leveraging inquirer for schema creation.
+    details: Fully self-contained library for schema definition and validation, using the node.js core (readline) for schema creation.
 ---

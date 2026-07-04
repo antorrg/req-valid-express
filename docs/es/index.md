@@ -17,7 +17,7 @@ features:
   - title: Tipado
     details: Soporte total para Typescript con inferencia automática de tipos.
   - title: Nativa de Express
-    details: Libreria de validacion de Node.js con adaptadores para Express.js, integrándose perfectamente como un middleware.
+    details: Diseñada especificamente para Express.js, integrándose perfectamente como un middleware. Se adapta tambien a Node.js como funciones puras.
   - title: Validación independiente
-    details: Librería totalmente auto-suficiente para definición de esquemas y validación, utilizando inquirer para la creación de esquemas.
+    details: Librería totalmente auto-suficiente para definición de esquemas y validación, utilizando el core de node.js (readline) para la creación de esquemas.
 ---

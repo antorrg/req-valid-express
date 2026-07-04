@@ -63,4 +63,9 @@ export class NodeValidator {
 
   static ValidReg = AuxValid.ValidReg
   static splitObjectProps = (obj:any, propsToExtract:any[]) => AuxValid.splitObjectProps(obj, propsToExtract)
+
+  // Alias semánticos para entornos no HTTP (Electron, Next.js, WebSockets, etc.)
+  static validatePayload = NodeValidator.validateBody;
+  static validateOptions = NodeValidator.validateQuery;
+  static validateId = NodeValidator.paramId;
 }

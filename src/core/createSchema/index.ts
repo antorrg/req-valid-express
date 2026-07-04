@@ -1,31 +1,19 @@
 import promptForField from "./generate.js";
 import fs from "fs/promises";
-import inquirer from "inquirer";
 import path from "path";
+import { promptInput, promptList, promptConfirm } from "./cliNative.js";
 import type { Schema } from "../ValidationEngine.js";
 
 export const buildSchema = async () => {
-  const { pathName } = await inquirer.prompt<{ pathName: string }>({
-    type: "input",
-    name: "pathName",
-    message: "Where do you want to save the file? (e.g. src/schemas)",
-  });
+  const pathName = await promptInput("Where do you want to save the file? (e.g. src/schemas)");
 
-  const { format } = await inquirer.prompt<{ format: "esm" | "cjs" | "ts" }>({
-    type: "list",
-    name: "format",
-    message: "Select the output format:",
-    choices: [
-      { name: "ESM (export default ...)", value: "esm" },
-      { name: "CommonJS (module.exports = ...)", value: "cjs" },
-      { name: "TypeScript (export default ... with typing)", value: "ts" },
-    ],
-  });
+  const format = await promptList<"esm" | "cjs" | "ts">("Select the output format:", [
+    { name: "ESM (export default ...)", value: "esm" },
+    { name: "CommonJS (module.exports = ...)", value: "cjs" },
+    { name: "TypeScript (export default ... with typing)", value: "ts" },
+  ]);
 
-  const { componentName } = await inquirer.prompt<{ componentName: string }>({
-    type: "input",
-    name: "componentName",
-    message: "File name (without extension):",
+  const componentName = await promptInput("File name (without extension):", {
     validate: (s) => s.trim().length > 0 || "File name is required",
   });
 
@@ -35,13 +23,7 @@ export const buildSchema = async () => {
   while (more) {
     const field = await promptForField();
     Object.assign(schema, field);
-    const { cont } = await inquirer.prompt<{ cont: boolean }>({
-      type: "confirm",
-      name: "cont",
-      message: "Add another field to the schema?",
-      default: true,
-    });
-    more = cont;
+    more = await promptConfirm("Add another field to the schema?", { default: true });
   }
 
   console.log("🧪 Generated schema:");

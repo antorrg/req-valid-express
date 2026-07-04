@@ -35,15 +35,12 @@
   "bugs": {
     "url": "https://github.com/antorrg/req-valid-express/issues"
   },
-  "dependencies": {
-    "inquirer": "^12.9.2"
-  },
   "peerDependencies": {
     "express": "^4.17.0 || ^5.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/inquirer": "^9.0.9",
+    "@types/node": "^26.1.0",
     "@types/supertest": "^6.0.3",
     "express": "^5.1.0",
     "supertest": "^7.1.4",

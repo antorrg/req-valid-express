@@ -1,7 +1,7 @@
 
 # req-valid-express
 
-Middleware to validate **body**, **query**, and **headers** in [Express](https://expressjs.com/) applications.  
+Type-safe schema validation engine for Node.js. Includes a dedicated middleware for **Express** (body, query, headers) and a framework-agnostic validator for **Next.js, Electron, WebSockets**, and more.  
 Includes support for **TypeScript**, **CommonJS**, and **ESM**.
 
 [![npm version](https://img.shields.io/npm/v/req-valid-express.svg)](https://www.npmjs.com/package/req-valid-express)
@@ -42,7 +42,7 @@ The generator is interactive and guides you step by step:
 
 You can generate schemas in two ways:  
 
-1. **Using npx (recommended, no install needed):**
+1. **Using npx (recommended, no global installation needed):**
 ```bash
 
    npx validate-schema
@@ -91,23 +91,23 @@ const app = express();
 const userSchema: Schema = {
     name: { 
       type: "string", 
-      required: true, 
+      // fields are required by default, use optional: true if needed
       sanitize: {
         trim: true,
         escape: true,
         lowercase: true
       }
     },
-    age: { type: "number", default: 18 }
+    age: { type: "int", default: 18 }
 };
 
 // Basic usage: default maxDepth
-app.post("/users", Validator.validateBody(userSchema.body), (req, res) => {
+app.post("/users", Validator.validateBody(userSchema), (req, res) => {
   res.json({ user: req.body });
 });
 
 // Advanced usage: configure maxDepth for deeply nested objects (e.g., MongoDB documents)
-app.post("/deep-users", Validator.validateBody(userSchema.body, 15), (req, res) => {
+app.post("/deep-users", Validator.validateBody(userSchema, 15), (req, res) => {
   res.json({ user: req.body });
 });
 
@@ -129,8 +129,8 @@ const app = express();
 
 // ⚠️ Best practice: always use the schema generator, not manual objects
 const querySchema = {
-  page: { type: "number", default: 1 },
-  limit: { type: "number", default: 10 }
+  page: { type: "int", default: 1 },
+  limit: { type: "int", default: 10 }
 };
 
 app.get("/items", Validator.validateQuery(querySchema), (req, res) => {
@@ -203,8 +203,9 @@ app.listen(3000, () => console.log("Server running at http://localhost:3000"));
 
 ## 📖 API
 
-The main class is `Validator`.
-It provides methods to validate different parts of the request:
+### 1. `Validator` (For Express)
+The main class for Express integrations.
+It provides middleware methods to validate different parts of the HTTP request:
 
 * **validateBody(schema)**
 * **validateQuery(schema)**
@@ -213,7 +214,15 @@ It provides methods to validate different parts of the request:
 * **paramId('param', method)**: validates request params (`req.params`)
 * **validReg**: provides built-in regex for `paramId` (optional)
 
-> Any field not declared in the schema will be removed.
+### 2. `NodeValidator` (For agnostic Node.js)
+Use this class for environments outside of Express (e.g., Next.js, Electron, WebSockets). It takes the raw data object directly instead of an Express request.
+
+* **validateBody(data, schema)** (Alias: **validatePayload**)
+* **validateQuery(data, schema)** (Alias: **validateOptions**)
+* **paramId(data, 'param', method)** (Alias: **validateId**)
+* **validateRegex(data, regex, 'field', message(optional))**
+
+> **Note:** Any field not declared in the schema will be removed.
 > Only valid fields or those with default values will pass through the validator.
 
 Each schema supports:
@@ -234,14 +243,13 @@ const schema = {
 
 ## 🧩 Express.Request Extension
 
-The library adds a `context` property to the Express `req` object, where validated values are stored.
+The library automatically overwrites `req.body` with the validated payload, and adds a `context` property to the Express `req` object to store validated `query` and `headers` without mutating the original read-only properties in Express 5.
 
 ```ts
 declare global {
   namespace Express {
     interface Request {
       context: {
-        body?: any;
         query?: any;
         headers?: any;
       };
