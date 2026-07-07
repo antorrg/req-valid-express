@@ -1,8 +1,5 @@
 # Introducción
 
-::: info Work in Progress
-Esta sección de la documentación está en construcción.
-:::
 
 `req-valid-express` es una librería de validación orientada a esquemas para aplicaciones Node.js, diseñada para validar datos de entrada de forma consistente, tipada y predecible en tiempo de ejecución.
 
@@ -80,3 +77,5 @@ Para resolver esta fricción sin romper la consistencia general de la librería,
 | `NodeValidator.paramId` | `NodeValidator.validateId` | Para extracción y validación de identificadores. |
 
 Ambos conjuntos de métodos son idénticos bajo el capó. Es libre de usar el que tenga más sentido para la arquitectura de su equipo.
+
+> Nota: `req-valid-express` no intenta competir con librerias de validación de node.js ya existentes, es una alternativa liviana para express, si bien evolucinó y evoluciona constantemente sigue siendo la simplicidad y la sencillez su característica principal, además de brindar seguridad para el backend en node.

@@ -68,6 +68,7 @@ By generating schemas with the library:
 * ✅ You guarantee full support for sanitization, defaults, and types.
 * ✅ Future updates will remain backward-compatible.
 * ✅ You avoid subtle bugs from hand-written definitions.
+* ✅ **Zero Dependencies**: The interactive CLI runs completely natively using Node.js without requiring external packages.
 
 👉 **Always generate schemas instead of crafting them manually.**
 
@@ -216,6 +217,8 @@ It provides middleware methods to validate different parts of the HTTP request:
 
 ### 2. `NodeValidator` (For agnostic Node.js)
 Use this class for environments outside of Express (e.g., Next.js, Electron, WebSockets). It takes the raw data object directly instead of an Express request.
+
+> **Design Rationale:** While the core API methods (`validateBody`, `validateQuery`) mirror Express's request structure for consistency, `NodeValidator` provides semantic aliases (`validatePayload`, `validateOptions`) that make more sense in non-HTTP contexts.
 
 * **validateBody(data, schema)** (Alias: **validatePayload**)
 * **validateQuery(data, schema)** (Alias: **validateOptions**)

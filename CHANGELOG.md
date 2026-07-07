@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.2] - 2026-07-06
+
+### Added
+- Created semantic aliases for `NodeValidator` methods (`validatePayload`, `validateOptions`, `validateId`) to provide better context outside of Express environments.
+
+### Changed
+- **Zero-Dependency CLI**: Refactored the `validate-schema` interactive CLI to use native Node.js `readline` instead of `inquirer`, completely removing external runtime dependencies.
+
+---
+
 ## [1.1.1] - 2026-06-16
 
 ### Changed

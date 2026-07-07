@@ -67,6 +67,7 @@ Generando esquemas con la librería:
 * ✅ Garantiza un total soporte para sanitización, validación, valores por defecto y tipado.
 * ✅ Las futuras actualizaciones seguirán siendo compatibles con versiones anteriores.
 * ✅ Evita errores sutiles en las definiciones escritas a mano.
+* ✅ **Cero Dependencias**: El CLI interactivo se ejecuta de forma nativa en Node.js sin requerir paquetes de terceros.
 
 👉 **Siempre genere esquemas en lugar de crearlos manualmente.**
 
@@ -211,6 +212,8 @@ Provee métodos tipo middleware para validar diferentes partes de la petición H
 
 ### 2. `NodeValidator` (Para Node.js agnóstico)
 Usa esta clase para entornos fuera de Express (ej. Next.js, Electron, WebSockets). Recibe los datos directamente en lugar de extraerlos de la request de Express.
+
+> **Decisión de Diseño:** Aunque los métodos principales (`validateBody`, `validateQuery`) mantienen los nombres de Express por consistencia, `NodeValidator` provee alias semánticos (`validatePayload`, `validateOptions`) que tienen más sentido en contextos ajenos a HTTP.
 
 - **validateBody(data, schema)** (Alias: **validatePayload**)
 - **validateQuery(data, schema)** (Alias: **validateOptions**)

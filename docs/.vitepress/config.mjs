@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitepress'
 
-
 export default defineConfig({
   title: "req-valid-express",
   description: "Type-safe request validation for Express",
@@ -16,18 +15,9 @@ export default defineConfig({
           {
             text: "Guide",
             items: [
-              { text: "Introduction", link: "/guide/introduction" },
-              { text: "Getting Started", link: "/guide/getting-started" },
-              { text: "Schemas", link: "/guide/schema" },
-              { text: "CLI", link: "/guide/cli" },
-              { text: "ValidateBody", link: "/guide/validateBody" },
-              { text: "ValidateQuery", link: "/guide/validateQuery" },
-              { text: "ValidateHeaders", link: "/guide/validateHeaders" },
-              { text: "ValidateRegex", link: "/guide/validateRegex" },
-              { text: "ParamId", link: "/guide/paramId" },
-              { text: "ValidReg", link: "/guide/rules" },
-              { text: "Rules", link: "/guide/rules" },
-              { text: "Errors", link: "/guide/errors" }
+              { text: "Getting Started", link: "/guide/introduction" },
+              { text: "Validator (Express)", link: "/guide/validateBody" },
+              { text: "NodeValidator", link: "/guide/rules" }
             ]
           },
           { text: "Examples", link: "/guide/examples" }
@@ -36,22 +26,40 @@ export default defineConfig({
         sidebar: {
           "/guide/": [
             {
-              text: "Guide",
-              collapsible: false,
+              text: "Getting Started",
+              collapsed: false,
               items: [
                 { text: "Introduction", link: "/guide/introduction" },
                 { text: "Getting Started", link: "/guide/getting-started" },
                 { text: "Schemas", link: "/guide/schema" },
                 { text: "CLI", link: "/guide/cli" },
+              ]
+            },
+            {
+              text: "Validator (Express)",
+              collapsed: false,
+              items: [
                 { text: "ValidateBody", link: "/guide/validateBody" },
-                { text: "Principales", link: "/guide/validateQuery" },
+                { text: "ValidateQuery", link: "/guide/validateQuery" },
                 { text: "ValidateHeaders", link: "/guide/validateHeaders" },
-                { text: "ValidateRegex", link: "/guide/validateRegex" },
                 { text: "ParamId", link: "/guide/paramId" },
-                { text: "ValidReg", link: "/guide/rules" },
+                { text: "Errors", link: "/guide/errors" }
+              ]
+            },
+            {
+              text: "NodeValidator",
+              collapsed: false,
+              items: [
+                { text: "ValidReg", link: "/guide/validReg" },
                 { text: "Rules", link: "/guide/rules" },
-                { text: "Errors", link: "/guide/errors" },
-                { text: "Examples", link: "/guide/examples" },
+                { text: "ValidateRegex", link: "/guide/validateRegex" }
+              ]
+            },
+            {
+              text: "Resources",
+              collapsed: false,
+              items: [
+                { text: "Examples", link: "/guide/examples" }
               ]
             }
           ]
@@ -68,15 +76,9 @@ export default defineConfig({
           {
             text: "Guía",
             items: [
-              { text: "Introducción", link: "/es/guide/introduction" },
-              { text: "Comenzar", link: "/es/guide/getting-started" },
-              { text: "Schemas", link: "/es/guide/schema" },
-              { text: "CLI", link: "/es/guide/cli" },
-              { text: "Principales metodos", link: "/es/guide/validation" },
-              { text: "ValidateRegex", link: "/es/guide/validateRegex" },
-              { text: "ParamId", link: "/es/guide/paramId" },
-              { text: "ValidReg", link: "/es/guide/rules" },
-              { text: "Rules", link: "/es/guide/errors" }
+              { text: "Primeros Pasos", link: "/es/guide/introduction" },
+              { text: "Validator (Express)", link: "/es/guide/validation" },
+              { text: "NodeValidator", link: "/es/guide/rules" }
             ]
           },
           { text: "Ejemplos", link: "/es/guide/examples" }
@@ -85,19 +87,38 @@ export default defineConfig({
         sidebar: {
           "/es/guide/": [
             {
-              text: "Guía",
-              collapsible: false,
+              text: "Primeros Pasos",
+              collapsed: false,
               items: [
                 { text: "Introducción", link: "/es/guide/introduction" },
                 { text: "Comenzar", link: "/es/guide/getting-started" },
                 { text: "Schemas", link: "/es/guide/schema" },
                 { text: "CLI", link: "/es/guide/cli" },
-                { text: "Principales metodos", link: "/es/guide/validation" },
-                { text: "ValidateRegex", link: "/es/guide/validateRegex" },
+              ]
+            },
+            {
+              text: "Validator (Express)",
+              collapsed: false,
+              items: [
+                { text: "Principales métodos", link: "/es/guide/validation" },
                 { text: "ParamId", link: "/es/guide/paramId" },
-                { text: "ValidReg", link: "/es/guide/rules" },
-                { text: "Rules", link: "/es/guide/errors" },
-                { text: "Ejemplos", link: "/es/guide/examples" },
+                { text: "Errores", link: "/es/guide/errors" }
+              ]
+            },
+            {
+              text: "NodeValidator",
+              collapsed: false,
+              items: [
+                { text: "ValidReg", link: "/es/guide/validReg" },
+                { text: "Rules", link: "/es/guide/rules" },
+                { text: "ValidateRegex", link: "/es/guide/validateRegex" }
+              ]
+            },
+            {
+              text: "Recursos",
+              collapsed: false,
+              items: [
+                { text: "Ejemplos", link: "/es/guide/examples" }
               ]
             }
           ]
