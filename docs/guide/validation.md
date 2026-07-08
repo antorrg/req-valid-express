@@ -1,5 +1,5 @@
 
-# Métodos principales de validación
+# Main methods of validation
 
 `req-valid-express` outlines three main middlewares for validating input data:
 

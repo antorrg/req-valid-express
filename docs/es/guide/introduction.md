@@ -25,7 +25,7 @@ El motor interno utiliza un algoritmo recursivo que permite:
 
 Todo este proceso se realiza siguiendo las buenas prácticas recomendadas por Node.js y Express para el manejo de datos y errores.
 
-El objetivo principal de `req-valid-express` es ser minimalista y, al mismo tiempo, liberar a handlers y controllers de la carga de validar manualmente los datos de entrada (`body`, `params` y `query`). Para ello, proporciona validación, tipado y cohersión de dataos en tiempo de ejecución (independiente del tipado estático de TypeScript) mediante un algoritmo recursivo que recorre un esquema de validación y lo compara con los datos enviados por el cliente.
+El objetivo principal de `req-valid-express` es ser minimalista y, al mismo tiempo, liberar a handlers y controllers de la carga de validar manualmente los datos de entrada (`body`, `params` y `query`). Para ello, proporciona validación, tipado y coerción de datos en tiempo de ejecución (independiente del tipado estático de TypeScript) mediante un algoritmo recursivo que recorre un esquema de validación y lo compara con los datos enviados por el cliente.
 
 Con la llegada de Express 5, algunos aspectos del manejo de la request cambiaron de forma significativa. En particular, `req.query` pasó a ser de solo lectura, lo que impide modificarlo directamente desde un middleware. Para adaptarse a este nuevo modelo, la librería introduce un manejador propio que almacena los datos validados en un objeto independiente, manteniendo compatibilidad con Express 5 tanto en proyectos `CommonJS`, `ECMAScript Modules` como en `TypeScript`, ofreciendo además una experiencia completamente tipada en este último.
 
@@ -78,4 +78,4 @@ Para resolver esta fricción sin romper la consistencia general de la librería,
 
 Ambos conjuntos de métodos son idénticos bajo el capó. Es libre de usar el que tenga más sentido para la arquitectura de su equipo.
 
-> Nota: `req-valid-express` no intenta competir con librerias de validación de node.js ya existentes, es una alternativa liviana para express, si bien evolucinó y evoluciona constantemente sigue siendo la simplicidad y la sencillez su característica principal, además de brindar seguridad para el backend en node.
+> Nota: `req-valid-express` no intenta competir con librerías de validación de node.js ya existentes, es una alternativa liviana para express, si bien evolucionó y evoluciona constantemente sigue siendo la simplicidad y la sencillez su característica principal, además de brindar seguridad para el backend en node.

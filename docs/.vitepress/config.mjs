@@ -37,18 +37,18 @@ export default defineConfig({
             },
             {
               text: "Validator (Express)",
-              collapsed: false,
+              collapsed: true,
               items: [
-                { text: "ValidateBody", link: "/guide/validateBody" },
+                { text: "Main methods", link: "/guide/validation" },
                 { text: "ValidateQuery", link: "/guide/validateQuery" },
                 { text: "ValidateHeaders", link: "/guide/validateHeaders" },
                 { text: "ParamId", link: "/guide/paramId" },
-                { text: "Errors", link: "/guide/errors" }
+                { text: "Errors", link: "/guide/exp-errors" }
               ]
             },
             {
               text: "NodeValidator",
-              collapsed: false,
+              collapsed: true,
               items: [
                 { text: "ValidReg", link: "/guide/validReg" },
                 { text: "Rules", link: "/guide/rules" },
@@ -98,7 +98,7 @@ export default defineConfig({
             },
             {
               text: "Validator (Express)",
-              collapsed: false,
+              collapsed: true,
               items: [
                 { text: "Principales métodos", link: "/es/guide/validation" },
                 { text: "ParamId", link: "/es/guide/paramId" },
@@ -107,7 +107,7 @@ export default defineConfig({
             },
             {
               text: "NodeValidator",
-              collapsed: false,
+              collapsed: true,
               items: [
                 { text: "ValidReg", link: "/es/guide/validReg" },
                 { text: "Rules", link: "/es/guide/rules" },

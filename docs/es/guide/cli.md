@@ -9,20 +9,20 @@ La librería incluye una herramienta de línea de comandos que permite crear sch
 Puede ejecutarla directamente:
 
 ```bash
-npx generate-schema
+npx validate-schema
 ```
 
-o crear un script: 
+o crear un script:
 
 ```json
  "scripts":{
- "schemas" : "node generate-schema",
+ "gen:schema" : "validate-schema",
  "start": "..."
  }
 
 ```
 
-En la consola se verá algo asi:
+En la consola se verá algo así:
 
 <img src='../../assets/capturaCLI1.png' alt='Imagen CLI' style='max-width=20vw'>
 
@@ -32,7 +32,6 @@ Al ejecutar el comando, la consola guiará paso a paso en la creación del schem
 - Formato de salida.
 - Nombre del schema.
 - Campos y atributos a validar.
-
 
 ![Imagen CLI](../../assets/capturaCLI4.png)
 
@@ -50,4 +49,5 @@ const userCreate: Schema = {
 };
 
 ```
-En la proxima vista se tratarán con mas detalle los metodos
+
+En la próxima sección se tratarán con más detalle los métodos.

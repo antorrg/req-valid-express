@@ -1,18 +1,6 @@
 # Schema
 
-Un **schema** es un objeto que describe la estructura esperada y las reglas de validación de los datos de entrada de una request.
-
-
-## Propiedades soportadas
-
-Un schema puede validar las siguientes partes de la solicitud:
-
-- **`body`**: El cuerpo de la solicitud (JSON).
-- **`query`**: Parámetros de la cadena de consulta (query string).
-- **`params`**: Parámetros de ruta (URL params).
-- **`headers`**: Cabeceras HTTP.
-- **`rules`**: Reglas personalizadas o predefinidas (se detallan más adelante).
-
+Un **schema** es un objeto que describe la estructura esperada y las reglas de validación de los datos de entrada.
 
 ## Tipos de datos
 
@@ -31,11 +19,8 @@ Tanto `int` como `float` corresponden al tipo `number` de TypeScript, pero se di
 
 ## Ejemplo completo
 
-### Cuerpo de la solicitud (`body`)  
-Métodos: `POST`, `PUT`, `PATCH`
+Esquema de validación para creación o edición:
 
-
-Esquema de validación para creación o edición: 
 ```ts
 
 const userCreate = {
@@ -60,4 +45,5 @@ const productCreate = {
     ]
 };
 ```
+
 Para crear los schemas se recomienda que utilice la herramienta provista (CLI).
