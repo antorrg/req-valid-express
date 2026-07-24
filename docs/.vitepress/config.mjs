@@ -42,6 +42,7 @@ export default defineConfig({
                 { text: "Main methods", link: "/guide/validation" },
                 { text: "ValidateQuery", link: "/guide/validateQuery" },
                 { text: "ValidateHeaders", link: "/guide/validateHeaders" },
+                { text: "ValidateRegex", link: "/guide/validateRegex"},
                 { text: "ParamId", link: "/guide/paramId" },
                 { text: "Errors", link: "/guide/exp-errors" }
               ]
@@ -77,8 +78,8 @@ export default defineConfig({
             text: "Guía",
             items: [
               { text: "Primeros Pasos", link: "/es/guide/introduction" },
-              { text: "Validator (Express)", link: "/es/guide/validation" },
-              { text: "NodeValidator", link: "/es/guide/rules" }
+              { text: "Validator (Express)", link: "/es/guide/validation-express" },
+              { text: "NodeValidator", link: "/es/guide/validation-node" }
             ]
           },
           { text: "Ejemplos", link: "/es/guide/examples" }
@@ -100,7 +101,8 @@ export default defineConfig({
               text: "Validator (Express)",
               collapsed: true,
               items: [
-                { text: "Principales métodos", link: "/es/guide/validation" },
+                { text: "Principales métodos", link: "/es/guide/validation-express" },
+                { text: "ValidateRegex", link: "/guide/validateRegex"},
                 { text: "ParamId", link: "/es/guide/paramId" },
                 { text: "Errores", link: "/es/guide/errors" }
               ]
@@ -109,6 +111,8 @@ export default defineConfig({
               text: "NodeValidator",
               collapsed: true,
               items: [
+                { text: "Principales métodos", link: "/es/guide/validation-node" },
+                { text: "ValidateRegex", link: "/guide/validateRegex"},
                 { text: "ValidReg", link: "/es/guide/validReg" },
                 { text: "Rules", link: "/es/guide/rules" },
                 { text: "ValidateRegex", link: "/es/guide/validateRegex" }

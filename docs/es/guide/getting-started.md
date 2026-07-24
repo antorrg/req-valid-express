@@ -2,7 +2,7 @@
 
 `req-valid-express` no admite campos opcionales implícitos. Todo campo esperado debe estar definido explícitamente en el esquema de validación, si se necesita un campo opcional deberá tener un valor `default`.
 
-La librería escribe un objeto en base al schmea declarado, sin modificar los datos de entrada. Los datos almacenados en estos objetos corresponden exactamente, en nombre y tipo, a lo definido en el esquema.
+La librería escribe un objeto en base al `schema` declarado, sin modificar los datos de entrada. Los datos almacenados en estos objetos corresponden exactamente, en nombre y tipo, a lo definido en el esquema.
 
 Si un campo requerido no está presente, se lanzará un error. La librería permite definir valores por defecto: si un campo llega vacío o no está presente y tiene un valor por defecto declarado en el esquema, dicho valor será asignado automáticamente.
 
@@ -25,6 +25,7 @@ pnpm install req-valid-express
 ```
 
 Una vez realizada la instalación se recomienda fuertemente no crear esquemas de validación de forma manual a fin de evitar errores de sintaxis. 
+
 
 La librería posee una herramienta de línea de comandos interactiva que lo guiará en el proceso de la construcción del esquema (Verá la creación de esquemas en el apartado `CLI`, [Interfaz de Línea de Comandos])
 

@@ -1,7 +1,7 @@
 
-# Métodos principales de validación
+# Métodos principales de validación para Express
 
-`req-valid-express` expone tres middlewares principales para validar datos de entrada:
+`req-valid-express` en su método `Validator` expone tres middlewares principales para validar datos de entrada:
 
 [`validateBody`](#validatebody)
 
@@ -9,8 +9,7 @@
 
 [`validateQuery`](#validatequery)
 
-
-Los tres comparten el mismo comportamiento interno y utilizan el mismo esquema de validación. La única diferencia entre ellos es dónde se almacena el resultado de la validación.
+Los tres comparten el mismo comportamiento interno (motor) y utilizan el mismo esquema de validación. La única diferencia entre ellos es dónde se almacena el resultado de la validación.
 
 ## Comportamiento general
 
@@ -28,7 +27,7 @@ Los tres comparten el mismo comportamiento interno y utilizan el mismo esquema d
 
 ### `validateBody`
 
-El método `validateBody` toma los datos entrantes desde `req.body`, valida únicamente los campos definidos en el schema y sobreescribe `req.body` con el resultado de la validación.
+El método `validateBody` toma los datos entrantes desde `req.body`, valida y transforma (de ser necesario) únicamente los campos definidos en el schema y sobreescribe `req.body` con el resultado de la validación.
 
 Esto garantiza que, a partir de ese punto, `req.body` contenga exclusivamente datos confiables, con la estructura y tipos esperados y que los handlers no necesiten realizar validaciones adicionales.
 
@@ -75,6 +74,7 @@ router.post('/', Validator.validateBody(userCreate), (req, res)=>{
     age: 18
 }
 ```
+
 Si alguno de los campos definidos en el schema no está presente o no cumple con el tipo esperado (incluyendo el caso habitual en el que los valores llegan como strings), el middleware lanzará un error con estado 400, el cual será manejado por el error handler de Express.
 
 ### `validateHeaders`
