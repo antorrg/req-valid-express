@@ -22,12 +22,45 @@ export type Schema = {
 
 export type QueryRule = Record<string, (string | number | boolean)[]>
 
+// function isFieldSchema(s: unknown): s is FieldSchema {
+//   return typeof s === "object" && s !== null && "type" in s;
+// }
+
+// function isSchema(s: unknown): s is Schema {
+//   return typeof s === "object" && s !== null && !("type" in (s as any));
+// }
+const FIELD_TYPES = new Set<keyof SchemaTypeMap>([
+  "string",
+  "int",
+  "float",
+  "boolean",
+  "array",
+]);
+
 function isFieldSchema(s: unknown): s is FieldSchema {
-  return typeof s === "object" && s !== null && "type" in s;
+  if (typeof s !== "object" || s === null || Array.isArray(s)) {
+    return false;
+  }
+
+  if (!("type" in s)) {
+    return false;
+  }
+
+  const type = (s as { type?: unknown }).type;
+
+  return (
+    typeof type === "string" &&
+    FIELD_TYPES.has(type as keyof SchemaTypeMap)
+  );
 }
 
 function isSchema(s: unknown): s is Schema {
-  return typeof s === "object" && s !== null && !("type" in (s as any));
+  return (
+    typeof s === "object" &&
+    s !== null &&
+    !Array.isArray(s) &&
+    !isFieldSchema(s)
+  );
 }
 
 export class ValidationEngine {
@@ -90,7 +123,7 @@ export class ValidationEngine {
     }
 
     if (typeof schema === "string") {
-      if (!["string", "int", "float", "boolean", "array"].includes(schema)) {
+      if (!FIELD_TYPES.has(schema as keyof SchemaTypeMap)) {
         throw new Error(`Invalid type '${schema}' at ${path || "root"}`);
       }
       return ValidationEngine.#validateField(

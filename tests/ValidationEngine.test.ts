@@ -51,7 +51,29 @@ describe('ValidationEngine', () => {
       const result = ValidationEngine.validateStructure(data, schema);
       expect(result).toEqual({ name: 'Test', role: 'user' });
     });
+    it("should allow 'type' as a field name in a schema", () => {
+      const schema: Schema = {
+        title: {
+          type: "string",
+        },
+        type: {
+          type: "string",
+        },
+        enabled: {
+          type: "boolean",
+        },
+      };
 
+      const data = {
+        title: "My media",
+        type: "video",
+        enabled: true,
+      };
+
+      const result = ValidationEngine.validateStructure(data, schema);
+
+      expect(result).toEqual(data);
+    });
     it('should validate arrays', () => {
       const schema: Schema = { 
         tags: ['string'] 
